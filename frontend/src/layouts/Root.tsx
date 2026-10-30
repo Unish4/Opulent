@@ -57,6 +57,9 @@ export default function Root() {
             <NavLink to="/" end className={navClass}>
               Home
             </NavLink>
+            <NavLink to="/games" className={navClass}>
+              Games
+            </NavLink>
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
@@ -103,6 +106,9 @@ export default function Root() {
         >
           <NavLink to="/" end className={navClass}>
             Home
+          </NavLink>
+          <NavLink to="/games" className={navClass}>
+            Games
           </NavLink>
           <Show when="signed-in">
             <NavLink to="/account" className={navClass}>

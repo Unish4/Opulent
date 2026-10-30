@@ -34,6 +34,11 @@ export const ENV = {
   },
   OWNER_EMAILS: csv(process.env.OWNER_EMAILS),
   REQUIRE_ADMIN_MFA: process.env.REQUIRE_ADMIN_MFA === "true",
+  CLOUDINARY: {
+    CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
+    API_KEY: process.env.CLOUDINARY_API_KEY as string,
+    API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
+  },
 };
 
 export const isDevelopment = ENV.NODE_ENV === "development";

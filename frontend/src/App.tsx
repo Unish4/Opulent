@@ -12,6 +12,8 @@ import SignUpPage from "./pages/auth/SignUpPage";
 import ProtectedRoute from "./pages/auth/ProtectedRoute";
 import AdminRoute from "./pages/auth/AdminRoute";
 import LoadingSpinner from "./components/LoadingSpinner";
+import GamesPage from "./pages/GamesPage";
+import GamePage from "./pages/GamePage";
 
 const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
 const AdminDashboardPage = lazy(
@@ -64,6 +66,8 @@ export default function App() {
 
           <Route path="/" element={<Root />}>
             <Route index element={<HomePage />} />
+            <Route path="games" element={<GamesPage />} />
+            <Route path="games/:slug" element={<GamePage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="account" element={<AccountPage />} />
             </Route>

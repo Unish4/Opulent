@@ -11,6 +11,8 @@ import healthRouter from "./routes/health.routes.js";
 import webhookRouter from "./routes/webhook.routes.js";
 import userRouter from "./routes/user.routes.js";
 import adminTeamRouter from "./routes/adminTeam.routes.js";
+import gameRouter from "./routes/game.routes.js";
+import uploadRouter from "./routes/upload.routes.js";
 
 const app = express();
 
@@ -47,6 +49,8 @@ app.get("/", (_req: Request, res: Response) => {
 app.use("/api/health", healthRouter);
 app.use("/api/users", userRouter);
 app.use("/api/admin/team", adminTeamRouter);
+app.use("/api/games", gameRouter);
+app.use("/api/admin/uploads", uploadRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
