@@ -71,6 +71,7 @@ export interface IOrder extends Document {
   cancellationReason?: string | null;
   reopenedAt?: Date | null;
   reopenReason?: string | null;
+  lastReminderAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -175,6 +176,7 @@ const orderSchema = new Schema<IOrder>(
     cancellationReason: { type: String, default: null },
     reopenedAt: { type: Date, default: null },
     reopenReason: { type: String, default: null },
+    lastReminderAt: { type: Date, default: null },
   },
   { timestamps: true },
 );

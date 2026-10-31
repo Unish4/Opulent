@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { attachUser } from "../middleware/attachUser.js";
-import { orderLimiter, refundLimiter } from "../middleware/rateLimiter.js";
+import {
+  actionLimiter,
+  orderLimiter,
+  refundLimiter,
+} from "../middleware/rateLimiter.js";
 import { validateRequest } from "../middleware/validateRequest.js";
 import { myOrdersQuerySchema } from "../validators/customerOrder.validator.js";
 import {
@@ -41,11 +45,13 @@ router.get(
 );
 router.post(
   "/:reference/proof-signal",
+  actionLimiter,
   validateRequest({ params: referenceParamSchema }),
   signalProofHandler,
 );
 router.post(
   "/:reference/cancel",
+  actionLimiter,
   validateRequest({ params: referenceParamSchema }),
   cancelOrderHandler,
 );

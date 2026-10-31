@@ -39,6 +39,7 @@ export interface IRefund extends Document {
   paidOutBy?: Types.ObjectId | null;
   paidOutAt?: Date | null;
   paidOutTxnId?: string | null;
+  lastReminderAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -74,6 +75,7 @@ const refundSchema = new Schema<IRefund>(
     paidOutBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
     paidOutAt: { type: Date, default: null },
     paidOutTxnId: { type: String, default: null },
+    lastReminderAt: { type: Date, default: null },
   },
   { timestamps: true },
 );

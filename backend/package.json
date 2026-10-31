@@ -12,13 +12,16 @@
     "seed:packages": "tsx src/scripts/seedPackages.ts",
     "seed:payment": "tsx src/scripts/seedPaymentConfig.ts",
     "cleanup:stale": "tsx src/scripts/cleanupStaleOrders.ts",
-    "cleanup:stale:prod": "node dist/scripts/cleanupStaleOrders.js"
+    "cleanup:stale:prod": "node dist/scripts/cleanupStaleOrders.js",
+    "remind:waiting": "tsx src/scripts/remindWaiting.ts",
+    "remind:waiting:prod": "node dist/scripts/remindWaiting.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@arcjet/node": "^1.5.0",
     "@clerk/express": "^2.1.85",
     "cloudinary": "^2.11.0",
     "cors": "^2.8.6",

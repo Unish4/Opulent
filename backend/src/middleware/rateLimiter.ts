@@ -34,3 +34,13 @@ export const refundLimiter = rateLimit({
   handler: (_req, _res, next) =>
     next(new ApiError(429, "Too many requests. Please wait a while.")),
 });
+
+export const actionLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 40,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: perUser,
+  handler: (_req, _res, next) =>
+    next(new ApiError(429, "Too many requests. Please wait a while.")),
+});

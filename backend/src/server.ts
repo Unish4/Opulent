@@ -6,7 +6,9 @@ import { ENV } from "./config/env.js";
 import { connectDB, disconnectDB } from "./config/db.js";
 import { logger } from "./utils/logger.js";
 import { httpLogger } from "./middleware/httpLogger.js";
+import { arcjetProtect } from "./middleware/arcjetProtect.js";
 import { notFoundHandler, errorHandler } from "./middleware/errorHandler.js";
+import { startScheduler } from "./jobs/scheduler.js";
 import healthRouter from "./routes/health.routes.js";
 import webhookRouter from "./routes/webhook.routes.js";
 import userRouter from "./routes/user.routes.js";
@@ -44,6 +46,8 @@ app.use(
 app.use("/api/webhooks", webhookRouter);
 
 app.use(express.json({ limit: "10kb" }));
+
+app.use(arcjetProtect);
 
 app.use(
   clerkMiddleware({
@@ -85,6 +89,8 @@ const start = async (): Promise<void> => {
       logger.info(`Opulent API running on http://localhost:${port}`);
       logger.info(`Environment: ${ENV.NODE_ENV}`);
     });
+
+    if (ENV.RUN_SCHEDULER) startScheduler();
 
     const shutdown = (signal: string): void => {
       logger.info({ signal }, "Shutting down");

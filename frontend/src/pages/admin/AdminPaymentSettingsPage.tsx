@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
 import ErrorState from "../../components/ErrorState";
 import QrUploadField from "../../components/admin/QrUploadField";
@@ -30,7 +30,7 @@ export default function AdminPaymentSettingsPage() {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors, isDirty },
   } = useForm<PaymentConfigFormValues>({
     resolver: zodResolver(paymentConfigFormSchema),
@@ -46,7 +46,7 @@ export default function AdminPaymentSettingsPage() {
       : undefined,
   });
 
-  const qrImageUrl = watch("qrImageUrl");
+  const qrImageUrl = useWatch({ control, name: "qrImageUrl" });
 
   const onSubmit = (values: PaymentConfigFormValues) =>
     update.mutate(values, {

@@ -67,9 +67,22 @@ export const ENV = {
     DAILY_LIMIT: positiveInt("LOOKUP_DAILY_LIMIT", 10),
     CACHE_TTL_SECONDS: positiveInt("LOOKUP_CACHE_TTL_SECONDS", 600),
   },
+  ARCJET: {
+    KEY: process.env.ARCJET_KEY || undefined,
+    MODE: (process.env.ARCJET_MODE === "LIVE" ? "LIVE" : "DRY_RUN") as
+      | "LIVE"
+      | "DRY_RUN",
+  },
+  RUN_SCHEDULER: process.env.RUN_SCHEDULER === "true",
   OWNER_EMAILS: csv(process.env.OWNER_EMAILS),
   REQUIRE_ADMIN_MFA: process.env.REQUIRE_ADMIN_MFA === "true",
   STALE_ORDER_HOURS: positiveInt("STALE_ORDER_HOURS", 48),
+  REMINDER_AFTER_MINUTES: positiveInt("REMINDER_AFTER_MINUTES", 15),
+  REMINDER_REPEAT_MINUTES: positiveInt("REMINDER_REPEAT_MINUTES", 60),
+  TELEGRAM: {
+    BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN || undefined,
+    CHAT_ID: process.env.TELEGRAM_CHAT_ID || undefined,
+  },
 };
 
 export const isDevelopment = ENV.NODE_ENV === "development";
