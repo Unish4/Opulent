@@ -15,6 +15,9 @@ import LoadingSpinner from "./components/LoadingSpinner";
 import GamesPage from "./pages/GamesPage";
 import GamePage from "./pages/GamePage";
 import CheckoutPage from "./pages/CheckoutPage";
+import MyOrdersPage from "./pages/MyOrdersPage";
+import OrderDetailPage from "./pages/OrderDetailPage";
+import HelpPage from "./pages/HelpPage";
 
 const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
 const AdminDashboardPage = lazy(
@@ -28,6 +31,7 @@ const AdminOrdersPage = lazy(() => import("./pages/admin/AdminOrdersPage"));
 const AdminOrderDetailPage = lazy(
   () => import("./pages/admin/AdminOrderDetailPage"),
 );
+const AdminRefundsPage = lazy(() => import("./pages/admin/AdminRefundsPage"));
 
 function AuthCacheGuard() {
   const { isLoaded, userId } = useAuth();
@@ -67,6 +71,7 @@ export default function App() {
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboardPage />} />
               <Route path="orders" element={<AdminOrdersPage />} />
+              <Route path="refunds" element={<AdminRefundsPage />} />
               <Route path="orders/:id" element={<AdminOrderDetailPage />} />
               <Route path="games" element={<AdminGamesPage />} />
               <Route
@@ -84,9 +89,12 @@ export default function App() {
           <Route path="/" element={<Root />}>
             <Route index element={<HomePage />} />
             <Route path="games" element={<GamesPage />} />
+            <Route path="help" element={<HelpPage />} />
             <Route path="games/:slug" element={<GamePage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="account" element={<AccountPage />} />
+              <Route path="account/orders" element={<MyOrdersPage />} />
+<Route path="account/orders/:reference" element={<OrderDetailPage />} />
               <Route path="checkout/:reference" element={<CheckoutPage />} />
             </Route>
           </Route>

@@ -119,10 +119,16 @@ export const ORDER_TRANSITIONS: Record<OrderAction, TransitionRule> = {
     customerVisible: true,
   },
   cancelByAdmin: {
-    from: ["pending_payment", "awaiting_review", "on_hold"],
+    from: [
+      "pending_payment",
+      "awaiting_review",
+      "on_hold",
+      "failed",
+      "processing",
+    ],
     to: "cancelled",
     actors: ADMINS,
-    paymentFrom: ["unpaid", "claimed", "rejected"],
+    paymentFrom: ["unpaid", "claimed", "rejected", "refunded"],
     customerVisible: true,
   },
   staleCleanup: {

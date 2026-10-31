@@ -10,6 +10,7 @@ import {
   type ProfileFormValues,
 } from "../schemas/profileSchema";
 import { isAdminRole } from "../types/user";
+import { Link } from "react-router";
 
 export default function AccountPage() {
   const { data: user, isLoading, isError, error, refetch } = useCurrentUser();
@@ -34,6 +35,12 @@ export default function AccountPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
       <h1 className="font-display text-2xl font-bold">My account</h1>
+      <Link
+        to="/account/orders"
+        className="mt-2 inline-block text-sm font-medium text-primary-hover hover:underline"
+      >
+        View my orders
+      </Link>
 
       <Card className="mt-6 p-5 sm:p-6">
         {isLoading && (

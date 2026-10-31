@@ -47,3 +47,45 @@ export interface CreateOrderPayload {
   playerDetails: Record<string, string>;
   lookupToken?: string;
 }
+
+export interface OrderListItem {
+  reference: string;
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  gameName: string;
+  packageName: string;
+  pricePaisa: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderListResult {
+  orders: OrderListItem[];
+  meta: { page: number; limit: number; total: number };
+}
+
+export interface CustomerTimelineEvent {
+  id: string;
+  action: string;
+  note: string | null;
+  createdAt: string;
+}
+
+export interface CustomerRefund {
+  id: string;
+  status: "requested" | "approved" | "denied" | "paid_out";
+  amountPaisa: number;
+  reasonCode: string;
+  decisionNote: string | null;
+  paidOutTxnId: string | null;
+  createdAt: string;
+  decidedAt: string | null;
+  paidOutAt: string | null;
+}
+
+export interface OrderDetailDto extends OrderDto {
+  canCancel: boolean;
+  canRequestRefund: boolean;
+  timeline: CustomerTimelineEvent[];
+  refunds: CustomerRefund[];
+}

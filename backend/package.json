@@ -10,7 +10,9 @@
     "seed:owner": "tsx src/scripts/seedOwner.ts",
     "seed:games": "tsx src/scripts/seedGames.ts",
     "seed:packages": "tsx src/scripts/seedPackages.ts",
-    "seed:payment": "tsx src/scripts/seedPaymentConfig.ts"
+    "seed:payment": "tsx src/scripts/seedPaymentConfig.ts",
+    "cleanup:stale": "tsx src/scripts/cleanupStaleOrders.ts",
+    "cleanup:stale:prod": "node dist/scripts/cleanupStaleOrders.js"
   },
   "keywords": [],
   "author": "",

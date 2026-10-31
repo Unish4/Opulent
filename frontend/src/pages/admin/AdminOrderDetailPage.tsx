@@ -18,6 +18,7 @@ import type { AdminAction } from "../../types/adminOrder";
 import { formatNpr } from "../../utils/money";
 import { formatDateTime } from "../../utils/time";
 import { buildWhatsAppLink } from "../../utils/whatsapp";
+import OrderRefundsPanel from "../../components/admin/refund/OrderRefundsPanel";
 
 const BUTTONS: {
   action: AdminAction;
@@ -340,6 +341,7 @@ export default function AdminOrderDetailPage() {
               <p className="text-sm text-muted">Customer record not found.</p>
             )}
           </Card>
+          <OrderRefundsPanel reference={order.reference} />
         </div>
 
         <Card className="h-fit p-5">
@@ -393,7 +395,7 @@ export default function AdminOrderDetailPage() {
       {dialog === "hold" && (
         <ReasonDialog
           title="Put order on hold"
-          description="Use this when something needs sorting out with the customer, such as a short payment or a name mismatch."
+          description="The customer sees this reason on their order page. Use this when something needs sorting out with the customer, such as a short payment or a name mismatch."
           confirmLabel="Put on hold"
           loading={loading}
           onClose={() => setDialog(null)}

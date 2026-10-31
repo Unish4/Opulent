@@ -18,6 +18,7 @@ import adminPackageRouter from "./routes/adminPackage.routes.js";
 import orderRouter from "./routes/order.routes.js";
 import paymentRouter from "./routes/payment.routes.js";
 import adminOrderRouter from "./routes/adminOrder.routes.js";
+import adminRefundRouter from "./routes/adminRefund.routes.js";
 
 const app = express();
 
@@ -61,6 +62,7 @@ app.use("/api/admin/packages", adminPackageRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/payment", paymentRouter);
 app.use("/api/admin/orders", adminOrderRouter);
+app.use("/api/admin/refunds", adminRefundRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

@@ -69,6 +69,7 @@ export const ENV = {
   },
   OWNER_EMAILS: csv(process.env.OWNER_EMAILS),
   REQUIRE_ADMIN_MFA: process.env.REQUIRE_ADMIN_MFA === "true",
+  STALE_ORDER_HOURS: positiveInt("STALE_ORDER_HOURS", 48),
 };
 
 export const isDevelopment = ENV.NODE_ENV === "development";

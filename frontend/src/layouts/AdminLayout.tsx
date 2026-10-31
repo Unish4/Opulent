@@ -1,5 +1,13 @@
 import { Link, NavLink, Outlet } from "react-router";
-import { ArrowLeft, ClipboardList, Gamepad2, Gem, LayoutDashboard, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  ClipboardList,
+  Gamepad2,
+  Gem,
+  LayoutDashboard,
+  RotateCcw,
+  Users,
+} from "lucide-react";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 import { cn } from "../utils/cn";
 
@@ -30,6 +38,9 @@ export default function AdminLayout() {
           </NavLink>
           <NavLink to="/admin/orders" className={linkClass}>
             <ClipboardList size={16} /> Orders
+          </NavLink>
+          <NavLink to="/admin/refunds" className={linkClass}>
+            <RotateCcw size={16} /> Refunds
           </NavLink>
           <NavLink to="/admin/games" className={linkClass}>
             <Gamepad2 size={16} /> Games
