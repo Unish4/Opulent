@@ -89,7 +89,7 @@ export default function AdminTeamPage() {
       </div>
 
       <Card className="p-5">
-        <h2 className="font-display text-base font-semibold">
+        <h2 className="font-display text-white font-semibold">
           Add a team member
         </h2>
         <form
@@ -134,7 +134,7 @@ export default function AdminTeamPage() {
       {data && (
         <>
           <section className="space-y-3">
-            <h2 className="font-display text-base font-semibold">Members</h2>
+            <h2 className="font-display text-white font-semibold">Members</h2>
             {data.members.map((member) => {
               const isMe = member.id === me?.id;
               return (
@@ -175,7 +175,7 @@ export default function AdminTeamPage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="font-display text-base font-semibold">
+            <h2 className="font-display text-white font-semibold">
               Pending invites
             </h2>
             {data.invites.length === 0 ? (

@@ -6,7 +6,17 @@ export const AUDIT_ACTIONS = [
   "admin_invite_revoked",
   "admin_invite_accepted",
   "owner_bootstrapped",
+  "game_created",
+  "game_updated",
+  "game_published",
+  "game_unpublished",
+  "game_availability_changed",
+  "package_created",
+  "package_updated",
+  "package_price_changed",
+  "package_availability_changed",
 ] as const;
+
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
 
 export interface IAuditLog extends Document {

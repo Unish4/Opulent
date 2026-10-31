@@ -7,10 +7,21 @@ export interface ApiError extends Error {
   details?: { path: string; message: string }[];
 }
 
+const getBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL?.trim();
+  if (!envUrl) return "/api";
+  let trimmed = envUrl.replace(/\/+$/, "");
+  if (trimmed.endsWith("/api/v1")) {
+    trimmed = trimmed.slice(0, -3);
+  }
+  if (trimmed.endsWith("/api")) {
+    return trimmed;
+  }
+  return `${trimmed}/api`;
+};
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL
-    ? `${import.meta.env.VITE_API_URL}/api`
-    : "/api",
+  baseURL: getBaseUrl(),
   withCredentials: true,
 });
 

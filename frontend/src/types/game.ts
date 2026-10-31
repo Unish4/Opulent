@@ -1,4 +1,5 @@
-export type PlayerFieldKey = "playerId" | "serverId" | "playerName";
+export type PlayerFieldKey = "playerId" | "serverId" | "playerName" | "email";
+export type FieldRuleType = "digits" | "alphanumeric" | "text" | "email";
 
 export interface PlayerField {
   key: PlayerFieldKey;
@@ -6,7 +7,7 @@ export interface PlayerField {
   placeholder: string | null;
   helpText: string | null;
   required: boolean;
-  ruleType: "digits" | "alphanumeric" | "text";
+  ruleType: FieldRuleType;
   minLength: number;
   maxLength: number;
 }
@@ -27,6 +28,41 @@ export interface GameDetail extends GameListItem {
   fulfilmentType: "uid_topup";
   playerFields: PlayerField[];
   lookup: { enabled: boolean };
+}
+
+export interface AdminGame extends GameDetail {
+  aliases: string[];
+  imagePublicId: string | null;
+  lookup: { enabled: boolean; providerGameCode: string | null };
+  isPublished: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GamePayload {
+  name: string;
+  slug?: string;
+  aliases: string[];
+  publisher: string;
+  description: string;
+  instructions: string;
+  playerFields: {
+    key: PlayerFieldKey;
+    label: string;
+    placeholder: string;
+    helpText: string;
+    required: boolean;
+    ruleType: FieldRuleType;
+    minLength: number;
+    maxLength: number;
+  }[];
+  lookup: { enabled: boolean; providerGameCode: string };
+  imageUrl?: string;
+  imagePublicId?: string;
+  isPublished: boolean;
+  isFeatured: boolean;
+  sortOrder: number;
 }
 
 export interface PageMeta {

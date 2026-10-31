@@ -4,10 +4,16 @@ export const PLAYER_FIELD_KEYS = [
   "playerId",
   "serverId",
   "playerName",
+  "email",
 ] as const;
 export type PlayerFieldKey = (typeof PLAYER_FIELD_KEYS)[number];
 
-export const FIELD_RULE_TYPES = ["digits", "alphanumeric", "text"] as const;
+export const FIELD_RULE_TYPES = [
+  "digits",
+  "alphanumeric",
+  "text",
+  "email",
+] as const;
 export type FieldRuleType = (typeof FIELD_RULE_TYPES)[number];
 
 export const FULFILMENT_TYPES = ["uid_topup"] as const;
@@ -31,6 +37,7 @@ export interface IGame extends Document {
   publisher?: string;
   description?: string;
   imageUrl?: string;
+  imagePublicId?: string;
   instructions?: string;
   fulfilmentType: FulfilmentType;
   playerFields: IPlayerField[];
@@ -88,6 +95,7 @@ const gameSchema = new Schema<IGame>(
     publisher: { type: String, trim: true, maxlength: 60 },
     description: { type: String, trim: true, maxlength: 500 },
     imageUrl: { type: String, trim: true },
+    imagePublicId: { type: String, trim: true, maxlength: 200 },
     instructions: { type: String, trim: true, maxlength: 1000 },
     fulfilmentType: {
       type: String,
@@ -115,8 +123,8 @@ gameSchema.pre("validate", function () {
   if (new Set(keys).size !== keys.length) {
     this.invalidate("playerFields", "Each player field can only be used once");
   }
-  if (!keys.includes("playerId")) {
-    this.invalidate("playerFields", "A game must have a playerId field");
+  if (!keys.includes("playerId") && !keys.includes("email")) {
+    this.invalidate("playerFields", "A game needs a playerId or email field");
   }
   for (const field of this.playerFields) {
     if (field.minLength > field.maxLength) {
@@ -126,11 +134,16 @@ gameSchema.pre("validate", function () {
       );
     }
   }
-  if (this.lookup?.enabled && !this.lookup.providerGameCode) {
-    this.invalidate(
-      "lookup.providerGameCode",
-      "Provider game code is required when lookup is enabled",
-    );
+  if (this.lookup?.enabled) {
+    if (!this.lookup.providerGameCode) {
+      this.invalidate(
+        "lookup.providerGameCode",
+        "Provider game code is required when lookup is enabled",
+      );
+    }
+    if (!keys.includes("playerId")) {
+      this.invalidate("lookup.enabled", "Lookup needs a playerId field");
+    }
   }
 });
 

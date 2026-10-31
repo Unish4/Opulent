@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet } from "react-router";
-import { ArrowLeft, Gem, LayoutDashboard, Users } from "lucide-react";
+import { ArrowLeft, Gamepad2, Gem, LayoutDashboard, Users } from "lucide-react";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 import { cn } from "../utils/cn";
 
@@ -27,6 +27,9 @@ export default function AdminLayout() {
         >
           <NavLink to="/admin" end className={linkClass}>
             <LayoutDashboard size={16} /> Overview
+          </NavLink>
+          <NavLink to="/admin/games" className={linkClass}>
+            <Gamepad2 size={16} /> Games
           </NavLink>
           {user?.role === "owner" && (
             <NavLink to="/admin/team" className={linkClass}>

@@ -27,3 +27,17 @@ export const toGameDetailDto = (game: IGame) => ({
   })),
   lookup: { enabled: game.lookup.enabled },
 });
+
+export const toAdminGameDto = (game: IGame) => ({
+  ...toGameDetailDto(game),
+  aliases: game.aliases,
+  imagePublicId: game.imagePublicId ?? null,
+  lookup: {
+    enabled: game.lookup.enabled,
+    providerGameCode: game.lookup.providerGameCode ?? null,
+  },
+  isPublished: game.isPublished,
+  sortOrder: game.sortOrder,
+  createdAt: game.createdAt,
+  updatedAt: game.updatedAt,
+});

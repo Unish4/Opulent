@@ -20,6 +20,9 @@ const AdminDashboardPage = lazy(
   () => import("./pages/admin/AdminDashboardPage"),
 );
 const AdminTeamPage = lazy(() => import("./pages/admin/AdminTeamPage"));
+const AdminGamesPage = lazy(() => import("./pages/admin/AdminGamesPage"));
+const AdminGameFormPage = lazy(() => import("./pages/admin/AdminGameFormPage"));
+const AdminPackagesPage = lazy(() => import("./pages/admin/AdminPackagesPage"));
 
 function AuthCacheGuard() {
   const { isLoaded, userId } = useAuth();
@@ -58,7 +61,14 @@ export default function App() {
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboardPage />} />
+              <Route path="games" element={<AdminGamesPage />} />
+              <Route
+                path="games/:id/packages"
+                element={<AdminPackagesPage />}
+              />
               <Route element={<AdminRoute ownerOnly />}>
+                <Route path="games/new" element={<AdminGameFormPage />} />
+                <Route path="games/:id" element={<AdminGameFormPage />} />
                 <Route path="team" element={<AdminTeamPage />} />
               </Route>
             </Route>

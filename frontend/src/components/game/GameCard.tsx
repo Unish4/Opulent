@@ -15,7 +15,7 @@ export default function GameCard({ game }: { game: GameListItem }) {
         className="aspect-square w-full transition-transform duration-300 group-hover:scale-105"
       />
       <div className="space-y-1 p-3">
-        <h3 className="truncate font-display text-sm font-semibold sm:text-base">
+        <h3 className="truncate font-display text-sm font-semibold sm:text-white">
           {game.name}
         </h3>
         <div className="flex items-center justify-between gap-2">

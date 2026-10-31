@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "seed:owner": "tsx src/scripts/seedOwner.ts",
-    "seed:games": "tsx src/scripts/seedGames.ts"
+    "seed:games": "tsx src/scripts/seedGames.ts",
+    "seed:packages": "tsx src/scripts/seedPackages.ts"
   },
   "keywords": [],
   "author": "",
@@ -20,8 +21,10 @@
     "cors": "^2.8.6",
     "dotenv": "^18.0.9",
     "express": "^5.3.0",
+    "express-rate-limit": "^8.7.2",
     "file-type": "^22.3.0",
     "helmet": "^8.3.0",
+    "jose": "^6.2.14",
     "mongoose": "^9.11.4",
     "multer": "^2.5.0",
     "pino": "^10.4.0",

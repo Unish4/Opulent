@@ -3,16 +3,19 @@ import { ArrowLeft } from "lucide-react";
 import EmptyState from "../components/EmptyState";
 import ErrorState from "../components/ErrorState";
 import GameImage from "../components/game/GameImage";
+import GameOrderPanel from "../components/game/GameOrderPanel";
 import { Badge, Card, Skeleton } from "../components/ui";
 import { useGame } from "../hooks/useGames";
+import { usePackages } from "../hooks/usePackages";
 import type { ApiError } from "../services/api";
 
 export default function GamePage() {
   const { slug } = useParams();
   const { data: game, isLoading, isError, error, refetch } = useGame(slug);
+  const packagesQuery = usePackages(slug);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
       <Link
         to="/games"
         className="mb-6 inline-flex items-center gap-1 text-sm text-secondary hover:text-fg"
@@ -22,8 +25,8 @@ export default function GamePage() {
 
       {isLoading && (
         <div className="space-y-4">
-          <Skeleton className="h-40" />
           <Skeleton className="h-32" />
+          <Skeleton className="h-64" />
         </div>
       )}
 
@@ -52,7 +55,7 @@ export default function GamePage() {
               src={game.imageUrl}
               name={game.name}
               width={300}
-              className="size-28 shrink-0 rounded-lg"
+              className="size-24 shrink-0 rounded-lg"
             />
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
@@ -74,27 +77,23 @@ export default function GamePage() {
 
           {game.instructions && (
             <Card className="p-5">
-              <h2 className="font-display text-base font-semibold">
-                Where to find your ID
+              <h2 className="font-display text-white font-semibold">
+                Where to find your details
               </h2>
               <p className="mt-2 text-sm text-secondary">{game.instructions}</p>
             </Card>
           )}
 
-          <Card className="p-5">
-            <h2 className="font-display text-base font-semibold">
-              What you will need
-            </h2>
-            <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-secondary">
-              {game.playerFields.map((field) => (
-                <li key={field.key}>{field.label}</li>
-              ))}
-            </ul>
-          </Card>
-
-          <Card className="border-dashed p-5 text-center text-sm text-secondary">
-            Packages for this game will appear here soon.
-          </Card>
+          {packagesQuery.isLoading && <Skeleton className="h-64" />}
+          {packagesQuery.isError && (
+            <ErrorState
+              message={packagesQuery.error.message}
+              onRetry={() => packagesQuery.refetch()}
+            />
+          )}
+          {packagesQuery.data && (
+            <GameOrderPanel game={game} packages={packagesQuery.data} />
+          )}
         </div>
       )}
     </div>

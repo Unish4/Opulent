@@ -86,7 +86,7 @@ export default function HomePage() {
           Game top-ups for Nepal,{" "}
           <span className="text-primary-hover">in NPR.</span>
         </h1>
-        <p className="mt-4 max-w-xl text-base text-secondary sm:text-lg">
+        <p className="mt-4 max-w-xl text-white text-secondary sm:text-lg">
           Free Fire, PUBG Mobile and Mobile Legends. Pay with eSewa and get
           support on WhatsApp.
         </p>
@@ -141,7 +141,7 @@ export default function HomePage() {
             className="rounded-lg border border-line bg-surface p-5"
           >
             <Icon className="text-primary-hover" size={22} />
-            <h2 className="mt-3 font-display text-base font-semibold">
+            <h2 className="mt-3 font-display text-white font-semibold">
               {title}
             </h2>
             <p className="mt-1 text-sm text-secondary">{text}</p>
