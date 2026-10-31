@@ -15,6 +15,16 @@ export const AUDIT_ACTIONS = [
   "package_updated",
   "package_price_changed",
   "package_availability_changed",
+  "order_payment_confirmed",
+  "order_payment_rejected",
+  "order_held",
+  "order_hold_released",
+  "order_completed",
+  "order_failed",
+  "order_retried",
+  "order_cancelled",
+  "order_claim_reassigned",
+  "order_reopened",
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];

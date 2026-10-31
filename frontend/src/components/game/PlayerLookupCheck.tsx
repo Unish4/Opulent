@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+
 import { useAuth } from "@clerk/react";
 import { CheckCircle2, Search } from "lucide-react";
 import { Button } from "../ui";
@@ -17,6 +17,7 @@ interface PlayerLookupCheckProps {
   getIds: () => Promise<{ playerId: string; serverId: string } | null>;
   onChecked: (player: CheckedPlayer) => void;
   disabled: boolean;
+  onRequireSignIn: () => void;
 }
 
 interface Notice {
@@ -63,15 +64,15 @@ export default function PlayerLookupCheck({
   getIds,
   onChecked,
   disabled,
+  onRequireSignIn,
 }: PlayerLookupCheckProps) {
-  const navigate = useNavigate();
   const { isSignedIn } = useAuth();
   const lookup = usePlayerLookup(slug);
   const [notice, setNotice] = useState<Notice | null>(null);
 
   const run = async () => {
     if (!isSignedIn) {
-      navigate("/sign-in");
+      onRequireSignIn();
       return;
     }
     const ids = await getIds();

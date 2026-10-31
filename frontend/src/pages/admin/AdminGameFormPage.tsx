@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import ErrorState from "../../components/ErrorState";
@@ -114,7 +114,7 @@ export default function AdminGameFormPage() {
     control,
     getValues,
     setValue,
-    watch,
+
     formState: { errors },
   } = useForm<GameFormValues>({
     resolver: zodResolver(gameFormSchema),
@@ -126,8 +126,8 @@ export default function AdminGameFormPage() {
     control,
     name: "playerFields",
   });
-  const lookupEnabled = watch("lookupEnabled");
-  const nameValue = watch("name");
+  const lookupEnabled = useWatch({ control, name: "lookupEnabled" });
+  const nameValue = useWatch({ control, name: "name" });
   const currentImage = uploaded?.url ?? game?.imageUrl ?? null;
 
   const onSubmit = (values: GameFormValues) => {

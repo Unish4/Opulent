@@ -15,6 +15,7 @@ import gameRouter from "./routes/game.routes.js";
 import uploadRouter from "./routes/upload.routes.js";
 import adminGameRouter from "./routes/adminGame.routes.js";
 import adminPackageRouter from "./routes/adminPackage.routes.js";
+import orderRouter from "./routes/order.routes.js";
 
 const app = express();
 
@@ -55,6 +56,7 @@ app.use("/api/games", gameRouter);
 app.use("/api/admin/uploads", uploadRouter);
 app.use("/api/admin/games", adminGameRouter);
 app.use("/api/admin/packages", adminPackageRouter);
+app.use("/api/orders", orderRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
