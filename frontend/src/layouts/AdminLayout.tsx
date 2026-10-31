@@ -1,13 +1,19 @@
+import { useEffect } from "react";
 import { Link, NavLink, Outlet } from "react-router";
 import {
   ArrowLeft,
   ClipboardList,
+  CreditCard,
   Gamepad2,
   Gem,
+  History,
   LayoutDashboard,
   RotateCcw,
+  UserCog,
   Users,
 } from "lucide-react";
+import { useAdminOrderSummary } from "../hooks/useAdminOrders";
+import { useAdminRefundSummary } from "../hooks/useAdminRefunds";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 import { cn } from "../utils/cn";
 
@@ -19,8 +25,32 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
       : "text-secondary hover:bg-hover hover:text-fg",
   );
 
+function CountBadge({ value }: { value: number }) {
+  if (value <= 0) return null;
+  return (
+    <span className="ml-auto rounded-full bg-amber px-2 py-0.5 text-xs font-bold text-white">
+      {value}
+    </span>
+  );
+}
+
 export default function AdminLayout() {
   const { data: user } = useCurrentUser();
+  const { data: orders } = useAdminOrderSummary();
+  const { data: refunds } = useAdminRefundSummary();
+  const isOwner = user?.role === "owner";
+
+  const reviewCount = orders?.awaiting_review ?? 0;
+  const refundCount =
+    (refunds?.requested ?? 0) + (isOwner ? (refunds?.approved ?? 0) : 0);
+
+  useEffect(() => {
+    const total = reviewCount + refundCount;
+    document.title = total > 0 ? `(${total}) Opulent Admin` : "Opulent Admin";
+    return () => {
+      document.title = "Opulent — Game Top-Up Store in Nepal";
+    };
+  }, [reviewCount, refundCount]);
 
   return (
     <div className="min-h-screen md:flex">
@@ -37,18 +67,30 @@ export default function AdminLayout() {
             <LayoutDashboard size={16} /> Overview
           </NavLink>
           <NavLink to="/admin/orders" className={linkClass}>
-            <ClipboardList size={16} /> Orders
+            <ClipboardList size={16} /> Orders{" "}
+            <CountBadge value={reviewCount} />
           </NavLink>
           <NavLink to="/admin/refunds" className={linkClass}>
-            <RotateCcw size={16} /> Refunds
+            <RotateCcw size={16} /> Refunds <CountBadge value={refundCount} />
           </NavLink>
           <NavLink to="/admin/games" className={linkClass}>
             <Gamepad2 size={16} /> Games
           </NavLink>
-          {user?.role === "owner" && (
-            <NavLink to="/admin/team" className={linkClass}>
-              <Users size={16} /> Team
-            </NavLink>
+          {isOwner && (
+            <>
+              <NavLink to="/admin/users" className={linkClass}>
+                <Users size={16} /> Customers
+              </NavLink>
+              <NavLink to="/admin/team" className={linkClass}>
+                <UserCog size={16} /> Team
+              </NavLink>
+              <NavLink to="/admin/settings/payment" className={linkClass}>
+                <CreditCard size={16} /> Payment
+              </NavLink>
+              <NavLink to="/admin/audit-log" className={linkClass}>
+                <History size={16} /> Audit log
+              </NavLink>
+            </>
           )}
           <Link
             to="/"

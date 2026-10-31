@@ -28,7 +28,7 @@ export default function OrderRefundsPanel({
   return (
     <Card className="space-y-3 p-5">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="font-display text-base font-semibold">Refunds</h2>
+        <h2 className="font-display text-white font-semibold">Refunds</h2>
         <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>
           Request refund
         </Button>

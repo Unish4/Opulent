@@ -2,6 +2,7 @@ import { Schema, model, type Document, type Types } from "mongoose";
 
 export const AUDIT_ACTIONS = [
   "user_role_changed",
+  "user_status_changed",
   "admin_invite_created",
   "admin_invite_revoked",
   "admin_invite_accepted",
@@ -29,6 +30,7 @@ export const AUDIT_ACTIONS = [
   "refund_approved",
   "refund_denied",
   "refund_paid_out",
+  "payment_config_changed",
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];

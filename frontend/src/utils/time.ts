@@ -22,3 +22,24 @@ export const timeAgo = (value: string | Date): string => {
   if (hours < 24) return `${hours} h ago`;
   return `${Math.round(hours / 24)} d ago`;
 };
+
+const dayFormatter = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Kathmandu",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+export const nepalDay = (date: Date = new Date()): string =>
+  dayFormatter.format(date);
+
+export const nepalDaysAgo = (days: number): string =>
+  nepalDay(new Date(Date.now() - days * 86_400_000));
+
+export const formatMinutes = (minutes: number | null): string => {
+  if (minutes === null) return "-";
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  return rest === 0 ? `${hours} h` : `${hours} h ${rest} min`;
+};

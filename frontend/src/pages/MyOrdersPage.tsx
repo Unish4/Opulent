@@ -111,7 +111,7 @@ export default function MyOrdersPage() {
                       </span>
                     </p>
                   </div>
-                  <p className="font-mono text-base font-semibold text-amber">
+                  <p className="font-mono text-white font-semibold text-amber">
                     {formatNpr(order.pricePaisa)}
                   </p>
                 </div>

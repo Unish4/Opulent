@@ -32,6 +32,14 @@ const AdminOrderDetailPage = lazy(
   () => import("./pages/admin/AdminOrderDetailPage"),
 );
 const AdminRefundsPage = lazy(() => import("./pages/admin/AdminRefundsPage"));
+const AdminUsersPage = lazy(() => import("./pages/admin/AdminUsersPage"));
+const AdminUserDetailPage = lazy(
+  () => import("./pages/admin/AdminUserDetailPage"),
+);
+const AdminPaymentSettingsPage = lazy(
+  () => import("./pages/admin/AdminPaymentSettingsPage"),
+);
+const AdminAuditLogPage = lazy(() => import("./pages/admin/AdminAuditLogPage"));
 
 function AuthCacheGuard() {
   const { isLoaded, userId } = useAuth();
@@ -82,6 +90,13 @@ export default function App() {
                 <Route path="games/new" element={<AdminGameFormPage />} />
                 <Route path="games/:id" element={<AdminGameFormPage />} />
                 <Route path="team" element={<AdminTeamPage />} />
+                <Route path="users" element={<AdminUsersPage />} />
+                <Route path="users/:id" element={<AdminUserDetailPage />} />
+                <Route
+                  path="settings/payment"
+                  element={<AdminPaymentSettingsPage />}
+                />
+                <Route path="audit-log" element={<AdminAuditLogPage />} />
               </Route>
             </Route>
           </Route>
@@ -94,7 +109,10 @@ export default function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="account" element={<AccountPage />} />
               <Route path="account/orders" element={<MyOrdersPage />} />
-<Route path="account/orders/:reference" element={<OrderDetailPage />} />
+              <Route
+                path="account/orders/:reference"
+                element={<OrderDetailPage />}
+              />
               <Route path="checkout/:reference" element={<CheckoutPage />} />
             </Route>
           </Route>

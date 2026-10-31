@@ -20,7 +20,7 @@ const run = async (): Promise<void> => {
         methodLabel: "fonepay",
         recipientName: "BIKRAM PD SHRESTHA",
         qrImageUrl,
-        whatsappNumber: "9779767485665",
+        whatsappNumber: "9779841031855",
         instructions:
           "Open eSewa or any digital wallet and scan the QR code.\nPay the exact amount shown for your order.\nIf eSewa has a remarks field, write your order ID there.\nTake a screenshot of the completed payment.",
       },

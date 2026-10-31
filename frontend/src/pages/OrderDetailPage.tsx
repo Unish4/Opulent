@@ -166,7 +166,7 @@ export default function OrderDetailPage() {
 
           {order.refunds.length > 0 && (
             <Card className="space-y-3 p-6">
-              <h2 className="font-display text-base font-semibold">Refunds</h2>
+              <h2 className="font-display text-white font-semibold">Refunds</h2>
               {order.refunds.map((refund) => {
                 const status = REFUND_STATUS[refund.status];
                 return (
@@ -204,7 +204,7 @@ export default function OrderDetailPage() {
           )}
 
           <Card className="p-6">
-            <h2 className="mb-4 font-display text-base font-semibold">
+            <h2 className="mb-4 font-display text-white font-semibold">
               Order timeline
             </h2>
             <OrderTimeline events={order.timeline} />
