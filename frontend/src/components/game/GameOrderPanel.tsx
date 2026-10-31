@@ -1,20 +1,22 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "@clerk/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import toast from "react-hot-toast";
 import EmptyState from "../EmptyState";
 import { Card } from "../ui";
 import OrderSummary from "./OrderSummary";
 import PackageGrid from "./PackageGrid";
 import PlayerDetailsCard from "./PlayerDetailsCard";
+import PlayerLookupCheck from "./PlayerLookupCheck";
 import StepHeading from "./StepHeading";
 import {
   buildPlayerSchema,
   type PlayerFormValues,
 } from "../../utils/playerSchema";
 import type { GameDetail } from "../../types/game";
+import type { CheckedPlayer } from "../../types/lookup";
 import type { PublicPackage } from "../../types/package";
 
 interface GameOrderPanelProps {
@@ -29,11 +31,30 @@ export default function GameOrderPanel({
   const navigate = useNavigate();
   const { isSignedIn } = useAuth();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [checked, setChecked] = useState<CheckedPlayer | null>(null);
+  const [confirmed, setConfirmed] = useState(false);
+  const lookupValidRef = useRef(false);
 
-  const schema = useMemo(
-    () => buildPlayerSchema(game.playerFields),
+  const hasServerField = game.playerFields.some(
+    (field) => field.key === "serverId",
+  );
+  const fieldsWithoutName = useMemo(
+    () => game.playerFields.filter((field) => field.key !== "playerName"),
     [game.playerFields],
   );
+
+  const resolver = useMemo(() => {
+    const full = zodResolver(
+      buildPlayerSchema(game.playerFields),
+    ) as unknown as Resolver<PlayerFormValues>;
+    const withoutName = zodResolver(
+      buildPlayerSchema(fieldsWithoutName),
+    ) as unknown as Resolver<PlayerFormValues>;
+    const pick: Resolver<PlayerFormValues> = (values, context, options) =>
+      (lookupValidRef.current ? withoutName : full)(values, context, options);
+    return pick;
+  }, [game.playerFields, fieldsWithoutName]);
+
   const defaultValues = useMemo(
     () =>
       Object.fromEntries(
@@ -46,19 +67,46 @@ export default function GameOrderPanel({
     register,
     handleSubmit,
     watch,
+    trigger,
+    getValues,
     formState: { errors },
-  } = useForm<PlayerFormValues>({
-    resolver: zodResolver(schema),
-    defaultValues,
-    mode: "onTouched",
-  });
+  } = useForm<PlayerFormValues>({ resolver, defaultValues, mode: "onTouched" });
 
   const values = watch();
+  const playerId = (values.playerId ?? "").trim();
+  const serverId = (values.serverId ?? "").trim();
+  const lookupValid =
+    !!checked && checked.playerId === playerId && checked.serverId === serverId;
+
+  useEffect(() => {
+    lookupValidRef.current = lookupValid;
+  }, [lookupValid]);
+
   const selected = packages.find((pkg) => pkg.id === selectedId) ?? null;
+  const visibleFields = lookupValid ? fieldsWithoutName : game.playerFields;
+  const summaryValues: PlayerFormValues =
+    lookupValid && checked
+      ? { ...values, playerName: checked.playerName }
+      : values;
+
+  const getIds = async () => {
+    const names = hasServerField ? ["playerId", "serverId"] : ["playerId"];
+    const ok = await trigger(names);
+    if (!ok) return null;
+    const current = getValues();
+    return {
+      playerId: (current.playerId ?? "").trim(),
+      serverId: (current.serverId ?? "").trim(),
+    };
+  };
 
   const onContinue = handleSubmit(() => {
     if (!selected) {
       toast.error("Choose a package first");
+      return;
+    }
+    if (lookupValid && !confirmed) {
+      toast.error("Please confirm this is your account");
       return;
     }
     if (!isSignedIn) {
@@ -85,11 +133,23 @@ export default function GameOrderPanel({
           <Card className="p-5">
             <StepHeading step={1} title="Player details" />
             <PlayerDetailsCard
-              fields={game.playerFields}
+              fields={visibleFields}
               register={register}
               errors={errors}
               disabled={!game.acceptingOrders}
             />
+            {game.lookup.enabled && (
+              <PlayerLookupCheck
+                slug={game.slug}
+                idKey={`${playerId}|${serverId}`}
+                checked={lookupValid ? checked : null}
+                confirmed={confirmed}
+                onConfirmedChange={setConfirmed}
+                getIds={getIds}
+                onChecked={setChecked}
+                disabled={!game.acceptingOrders}
+              />
+            )}
           </Card>
 
           <Card className="p-5">
@@ -114,7 +174,7 @@ export default function GameOrderPanel({
           <OrderSummary
             game={game}
             selected={selected}
-            values={values}
+            values={summaryValues}
             disabled={!game.acceptingOrders}
             onContinue={onContinue}
           />
