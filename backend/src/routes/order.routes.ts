@@ -7,8 +7,10 @@ import {
   referenceParamSchema,
 } from "../validators/order.validator.js";
 import {
+  cancelOrderHandler,
   createOrderHandler,
   getOrderHandler,
+  signalProofHandler,
 } from "../controllers/order.controller.js";
 
 const router = Router();
@@ -25,6 +27,16 @@ router.get(
   "/:reference",
   validateRequest({ params: referenceParamSchema }),
   getOrderHandler,
+);
+router.post(
+  "/:reference/proof-signal",
+  validateRequest({ params: referenceParamSchema }),
+  signalProofHandler,
+);
+router.post(
+  "/:reference/cancel",
+  validateRequest({ params: referenceParamSchema }),
+  cancelOrderHandler,
 );
 
 export default router;

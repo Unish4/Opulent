@@ -1,6 +1,10 @@
 import type { Request, Response } from "express";
 import { z } from "zod";
-import { createOrder, getOrderForUser } from "../services/order.service.js";
+import {
+  createOrder,
+  getOrderForUser,
+  transitionOwnOrder,
+} from "../services/order.service.js";
 import { ApiError } from "../utils/ApiError.js";
 import { toOrderDto } from "../utils/toOrderDto.js";
 
@@ -23,6 +27,26 @@ export const getOrderHandler = async (req: Request, res: Response) => {
   const order = await getOrderForUser(
     req.appUser!,
     String(req.params.reference),
+  );
+  res.status(200).json({ data: toOrderDto(order) });
+};
+
+export const signalProofHandler = async (req: Request, res: Response) => {
+  const order = await transitionOwnOrder(
+    req.appUser!,
+    String(req.params.reference),
+    "signalProof",
+    String(req.id),
+  );
+  res.status(200).json({ data: toOrderDto(order) });
+};
+
+export const cancelOrderHandler = async (req: Request, res: Response) => {
+  const order = await transitionOwnOrder(
+    req.appUser!,
+    String(req.params.reference),
+    "cancelByCustomer",
+    String(req.id),
   );
   res.status(200).json({ data: toOrderDto(order) });
 };

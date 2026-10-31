@@ -9,7 +9,8 @@
     "start": "node dist/server.js",
     "seed:owner": "tsx src/scripts/seedOwner.ts",
     "seed:games": "tsx src/scripts/seedGames.ts",
-    "seed:packages": "tsx src/scripts/seedPackages.ts"
+    "seed:packages": "tsx src/scripts/seedPackages.ts",
+    "seed:payment": "tsx src/scripts/seedPaymentConfig.ts"
   },
   "keywords": [],
   "author": "",

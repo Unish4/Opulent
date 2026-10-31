@@ -10,6 +10,7 @@ import type { CreateOrderInput } from "../validators/order.validator.js";
 import { buildPlayerDetailsSchema } from "../validators/playerDetails.validator.js";
 import { getPublishedGameBySlug } from "./game.service.js";
 import { verifyLookupToken, type LookupClaims } from "./lookupToken.service.js";
+import { applyTransition } from "./orderTransition.service.js";
 
 const MAX_OPEN_UNPAID_ORDERS = 3;
 const MAX_REFERENCE_ATTEMPTS = 5;
@@ -211,4 +212,19 @@ export const getOrderForUser = async (
   const order = await Order.findOne({ reference, userId: user._id });
   if (!order) throw new ApiError(404, "Order not found");
   return order;
+};
+
+export const transitionOwnOrder = async (
+  user: IUser,
+  reference: string,
+  action: "signalProof" | "cancelByCustomer",
+  requestId: string,
+): Promise<IOrder> => {
+  const order = await getOrderForUser(user, reference);
+  return applyTransition({
+    orderId: String(order._id),
+    action,
+    actor: { type: "customer", userId: String(user._id) },
+    requestId,
+  });
 };

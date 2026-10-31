@@ -1,9 +1,17 @@
 import type { IOrder } from "../models/Order.js";
 
+const statusReason = (order: IOrder): string | null => {
+  if (order.status === "rejected") return order.rejectionReason ?? null;
+  if (order.status === "cancelled") return order.cancellationReason ?? null;
+  if (order.status === "on_hold") return order.holdReason ?? null;
+  return null;
+};
+
 export const toOrderDto = (order: IOrder) => ({
   reference: order.reference,
   status: order.status,
   paymentStatus: order.paymentStatus,
+  statusReason: statusReason(order),
   currency: order.currency,
   pricePaisa: order.pricePaisaSnapshot,
   game: { name: order.gameSnapshot.name, slug: order.gameSnapshot.slug },

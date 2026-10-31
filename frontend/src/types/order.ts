@@ -19,6 +19,7 @@ export interface OrderDto {
   reference: string;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
+  statusReason: string | null;
   currency: "NPR";
   pricePaisa: number;
   game: { name: string; slug: string };
