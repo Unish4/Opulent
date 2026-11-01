@@ -4,9 +4,7 @@ import type { PlayerField } from "../types/game";
 export type PlayerFormValues = Record<string, string>;
 
 const buildFieldSchema = (field: PlayerField) => {
-  let schema = z
-    .string()
-    .trim()
+  let schema = (field.key === "password" ? z.string() : z.string().trim())
     .min(1, `${field.label} is required`)
     .min(
       field.minLength,

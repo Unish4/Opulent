@@ -26,7 +26,9 @@ import {
   releaseHoldHandler,
   reopenHandler,
   retryHandler,
+  revealPasswordHandler
 } from "../controllers/adminOrder.controller.js";
+import { actionLimiter } from "../middleware/rateLimiter.js";
 
 const router = Router();
 
@@ -93,6 +95,12 @@ router.post(
   requireOwner,
   validateRequest({ params: idParamSchema, body: reopenSchema }),
   reopenHandler,
+);
+router.post(
+  "/:id/reveal-password",
+  actionLimiter,
+  params,
+  revealPasswordHandler,
 );
 
 export default router;

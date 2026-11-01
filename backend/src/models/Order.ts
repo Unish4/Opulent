@@ -31,7 +31,9 @@ export interface IOrder extends Document {
     serverId?: string;
     playerName?: string;
     email?: string;
+    password?: string;
     playerNameSource: NameSource;
+    login?:string;
   };
   lookupSnapshot?: {
     playerName: string;
@@ -56,6 +58,10 @@ export interface IOrder extends Document {
   };
   completion?: { seenPlayerName: string; completedBy: Types.ObjectId };
   idempotencyKey?: string;
+  credentialSecret?: string;
+  hasCredential?: boolean;
+  credentialWipedAt?: Date | null;
+  credentialRevealCount?: number;
   proofSignalAt?: Date | null;
   paymentConfirmedAt?: Date | null;
   claimedAt?: Date | null;
@@ -116,6 +122,8 @@ const orderSchema = new Schema<IOrder>(
       serverId: { type: String },
       playerName: { type: String },
       email: { type: String },
+      password: { type: String },
+      login: { type: String },
       playerNameSource: { type: String, enum: NAME_SOURCES, required: true },
     },
     lookupSnapshot: {
@@ -157,6 +165,10 @@ const orderSchema = new Schema<IOrder>(
       default: undefined,
     },
     idempotencyKey: { type: String },
+    credentialSecret: { type: String, select: false },
+    hasCredential: { type: Boolean, default: false },
+    credentialWipedAt: { type: Date, default: null },
+    credentialRevealCount: { type: Number, default: 0 },
     proofSignalAt: { type: Date, default: null },
     paymentConfirmedAt: { type: Date, default: null },
     claimedAt: { type: Date, default: null },

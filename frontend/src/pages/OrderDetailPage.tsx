@@ -111,6 +111,11 @@ export default function OrderDetailPage() {
                   </span>
                 </Row>
               )}
+              {order.playerDetails.login && (
+                <Row label="Login">
+                  <span className="font-mono">{order.playerDetails.login}</span>
+                </Row>
+              )}
               {order.playerDetails.serverId && (
                 <Row label="Server ID">
                   <span className="font-mono">
@@ -121,6 +126,11 @@ export default function OrderDetailPage() {
               {order.playerDetails.email && (
                 <Row label="Account email">
                   <span className="font-mono">{order.playerDetails.email}</span>
+                </Row>
+              )}
+              {order.playerDetails.password && (
+                <Row label="Password">
+                  <span className="font-mono">••••••••</span>
                 </Row>
               )}
               {order.playerDetails.playerName && (

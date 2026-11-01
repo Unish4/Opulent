@@ -32,12 +32,6 @@ export interface DashboardData {
     estimatedProfitPaisa: number | null;
   }[];
   catalogue: { gamesPublished: number; packagesAvailable: number };
-  lookup: {
-    provider: string;
-    usedToday: number;
-    dailyLimit: number;
-    keyConfigured: boolean;
-  };
 }
 
 export interface AdminUserListItem {
@@ -94,4 +88,19 @@ export interface AuditLogItem {
 export interface AuditLogsResult {
   logs: AuditLogItem[];
   meta: { page: number; limit: number; total: number };
+}
+
+export interface LookupKeyUsage {
+  slug: string;
+  name: string;
+  group: string;
+  shared: boolean;
+  usedThisMonth: number;
+  keyConfigured: boolean;
+}
+
+export interface LookupUsageData {
+  period: string;
+  monthlyLimit: number;
+  keys: LookupKeyUsage[];
 }

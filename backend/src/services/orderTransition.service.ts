@@ -120,6 +120,20 @@ export const applyTransition = async ({
         { session },
       );
 
+      if (
+        order.hasCredential &&
+        ["completed", "cancelled", "rejected"].includes(plan.nextStatus)
+      ) {
+        await Order.updateOne(
+          { _id: order._id },
+          {
+            $unset: { credentialSecret: 1 },
+            $set: { hasCredential: false, credentialWipedAt: new Date() },
+          },
+          { session },
+        );
+      }
+
       const auditAction = AUDIT_FOR_ACTION[action];
       if (auditAction && actor.type === "admin") {
         await writeAuditLog({

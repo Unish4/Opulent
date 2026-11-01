@@ -17,6 +17,8 @@ import type {
   ReasonBody,
   ReopenBody,
 } from "../validators/adminOrder.validator.js";
+import { revealOrderPassword } from "../services/credential.service.js";
+import { getContext } from "../utils/requestContext.js";
 
 const actorOf = (req: Request): Actor => ({
   type: "admin",
@@ -45,12 +47,10 @@ const act =
 export const listOrdersHandler = async (req: Request, res: Response) => {
   const query = res.locals.query as ListOrdersQuery;
   const { orders, total } = await listAdminOrders(req.appUser!, query);
-  res
-    .status(200)
-    .json({
-      data: orders,
-      meta: { page: query.page, limit: query.limit, total },
-    });
+  res.status(200).json({
+    data: orders,
+    meta: { page: query.page, limit: query.limit, total },
+  });
 };
 
 export const orderSummaryHandler = async (_req: Request, res: Response) => {
@@ -58,11 +58,9 @@ export const orderSummaryHandler = async (_req: Request, res: Response) => {
 };
 
 export const getOrderDetailHandler = async (req: Request, res: Response) => {
-  res
-    .status(200)
-    .json({
-      data: await getAdminOrderDetail(req.appUser!, String(req.params.id)),
-    });
+  res.status(200).json({
+    data: await getAdminOrderDetail(req.appUser!, String(req.params.id)),
+  });
 };
 
 export const confirmPaymentHandler = act<ConfirmPaymentBody>(
@@ -105,3 +103,12 @@ export const reopenHandler = act<ReopenBody>("reopen", (body) => ({
   reason: body.reason,
   claimantId: body.claimantId,
 }));
+
+export const revealPasswordHandler = async (req: Request, res: Response) => {
+  const password = await revealOrderPassword(
+    getContext(req),
+    String(req.params.id),
+  );
+  res.setHeader("Cache-Control", "no-store");
+  res.status(200).json({ data: { password } });
+};

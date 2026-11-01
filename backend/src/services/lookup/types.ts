@@ -2,6 +2,7 @@ export interface PlayerLookupInput {
   providerGameCode: string;
   playerId: string;
   serverId?: string;
+  apiKey: string;
 }
 
 export interface PlayerLookupResult {

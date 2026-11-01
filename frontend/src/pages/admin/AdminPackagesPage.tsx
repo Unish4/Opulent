@@ -112,32 +112,25 @@ export default function AdminPackagesPage() {
                   </p>
                 )}
               </div>
-              <Badge tone={pkg.isAvailable ? "success" : "neutral"}>
-                {pkg.isAvailable ? "Available" : "Off"}
+              <Badge tone={pkg.isAvailable ? "success" : "amber"}>
+                {pkg.isAvailable ? "Available" : "Unavailable"}
               </Badge>
               <Button
                 size="sm"
                 variant="secondary"
-                loading={
-                  setAvailability.isPending &&
-                  setAvailability.variables?.id === pkg.id
-                }
+                loading={setAvailability.isPending && setAvailability.variables?.id === pkg.id}
                 onClick={() =>
                   setAvailability.mutate(
                     { id: pkg.id, isAvailable: !pkg.isAvailable },
                     {
                       onSuccess: () =>
-                        toast.success(
-                          pkg.isAvailable
-                            ? "Package switched off"
-                            : "Package switched on",
-                        ),
+                        toast.success(pkg.isAvailable ? "Package marked unavailable" : "Package is available again"),
                       onError: (err) => toast.error(err.message),
                     },
                   )
                 }
               >
-                {pkg.isAvailable ? "Switch off" : "Switch on"}
+                {pkg.isAvailable ? "Make unavailable" : "Make available"}
               </Button>
               {isOwner && (
                 <Button

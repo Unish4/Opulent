@@ -19,6 +19,7 @@ import { formatNpr } from "../../utils/money";
 import { formatDateTime } from "../../utils/time";
 import { buildWhatsAppLink } from "../../utils/whatsapp";
 import OrderRefundsPanel from "../../components/admin/refund/OrderRefundsPanel";
+import AccountPasswordCard from "../../components/admin/order/AccountPasswordCard";
 
 const BUTTONS: {
   action: AdminAction;
@@ -205,6 +206,12 @@ export default function AdminOrderDetailPage() {
                   />
                 </Row>
               )}
+              {order.playerDetails.login && (
+                <Row label="Login">
+                  <span className="font-mono">{order.playerDetails.login}</span>
+                  <CopyButton value={order.playerDetails.login} label="Login" />
+                </Row>
+              )}
               {order.playerDetails.serverId && (
                 <Row label="Server ID">
                   <span className="font-mono">
@@ -220,6 +227,17 @@ export default function AdminOrderDetailPage() {
                 <Row label="Account email">
                   <span className="font-mono">{order.playerDetails.email}</span>
                   <CopyButton value={order.playerDetails.email} label="Email" />
+                </Row>
+              )}
+              {order.playerDetails.password && (
+                <Row label="Account password">
+                  <span className="font-mono">
+                    {order.playerDetails.password}
+                  </span>
+                  <CopyButton
+                    value={order.playerDetails.password}
+                    label="Password"
+                  />
                 </Row>
               )}
             </dl>
@@ -246,6 +264,14 @@ export default function AdminOrderDetailPage() {
               </div>
             )}
           </Card>
+
+          {order.hasCredential && (
+            <AccountPasswordCard
+              orderId={order.id}
+              canReveal={order.canRevealPassword}
+              revealCount={order.credentialRevealCount}
+            />
+          )}
 
           <Card className="space-y-3 p-5">
             <h2 className="font-display text-white font-semibold">Payment</h2>

@@ -5,6 +5,8 @@ export const PLAYER_FIELD_KEYS = [
   "serverId",
   "playerName",
   "email",
+  "login",
+  "password",
 ] as const;
 export type PlayerFieldKey = (typeof PLAYER_FIELD_KEYS)[number];
 
@@ -13,6 +15,7 @@ export const FIELD_RULE_TYPES = [
   "alphanumeric",
   "text",
   "email",
+  "password",
 ] as const;
 export type FieldRuleType = (typeof FIELD_RULE_TYPES)[number];
 
@@ -123,8 +126,25 @@ gameSchema.pre("validate", function () {
   if (new Set(keys).size !== keys.length) {
     this.invalidate("playerFields", "Each player field can only be used once");
   }
-  if (!keys.includes("playerId") && !keys.includes("email")) {
-    this.invalidate("playerFields", "A game needs a playerId or email field");
+  if (
+    !keys.includes("playerId") &&
+    !keys.includes("email") &&
+    !keys.includes("login")
+  ) {
+    this.invalidate(
+      "playerFields",
+      "A game needs a playerId, email or login field",
+    );
+  }
+  if (
+    keys.includes("password") &&
+    !keys.includes("login") &&
+    !keys.includes("email")
+  ) {
+    this.invalidate(
+      "playerFields",
+      "A password field needs a login or email field",
+    );
   }
   for (const field of this.playerFields) {
     if (field.minLength > field.maxLength) {

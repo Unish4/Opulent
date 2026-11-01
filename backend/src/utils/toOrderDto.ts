@@ -25,6 +25,8 @@ export const toOrderDto = (order: IOrder) => ({
     serverId: order.playerDetails.serverId ?? null,
     playerName: order.playerDetails.playerName ?? null,
     email: order.playerDetails.email ?? null,
+    login: order.playerDetails.login ?? null,
+    password: order.playerDetails.password ? "••••••••" : null,
     playerNameSource: order.playerDetails.playerNameSource,
   },
   lookup: order.lookupSnapshot

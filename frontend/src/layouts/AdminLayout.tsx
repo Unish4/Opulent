@@ -5,13 +5,13 @@ import {
   ClipboardList,
   CreditCard,
   Gamepad2,
-  Gem,
   History,
   LayoutDashboard,
   RotateCcw,
   UserCog,
   Users,
 } from "lucide-react";
+import Logo from "../components/Logo";
 import { useAdminOrderSummary } from "../hooks/useAdminOrders";
 import { useAdminRefundSummary } from "../hooks/useAdminRefunds";
 import { useCurrentUser } from "../hooks/useCurrentUser";
@@ -28,7 +28,7 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
 function CountBadge({ value }: { value: number }) {
   if (value <= 0) return null;
   return (
-    <span className="ml-auto rounded-full bg-amber px-2 py-0.5 text-xs font-bold text-white">
+    <span className="ml-auto rounded-full bg-amber px-2 py-0.5 text-xs font-bold text-[#0a0d14]">
       {value}
     </span>
   );
@@ -55,9 +55,11 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen md:flex">
       <aside className="border-b border-line bg-surface md:min-h-screen md:w-60 md:border-b-0 md:border-r">
-        <div className="flex h-14 items-center gap-2 px-4 font-display font-semibold">
-          <Gem size={18} className="text-primary-hover" />
-          Opulent Admin
+        <div className="flex h-14 items-center gap-2 px-4">
+          <Logo className="h-7" />
+          <span className="font-display text-sm font-semibold text-secondary">
+            Admin
+          </span>
         </div>
         <nav
           aria-label="Admin"

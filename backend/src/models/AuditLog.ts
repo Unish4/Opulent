@@ -31,6 +31,8 @@ export const AUDIT_ACTIONS = [
   "refund_denied",
   "refund_paid_out",
   "payment_config_changed",
+  "lookup_usage_adjusted",
+  "order_credential_revealed",
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];

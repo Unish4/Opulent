@@ -1,5 +1,16 @@
-export type PlayerFieldKey = "playerId" | "serverId" | "playerName" | "email";
-export type FieldRuleType = "digits" | "alphanumeric" | "text" | "email";
+export type PlayerFieldKey =
+  | "playerId"
+  | "serverId"
+  | "playerName"
+  | "email"
+  | "login"
+  | "password";
+export type FieldRuleType =
+  | "digits"
+  | "alphanumeric"
+  | "text"
+  | "email"
+  | "password";
 
 export interface PlayerField {
   key: PlayerFieldKey;

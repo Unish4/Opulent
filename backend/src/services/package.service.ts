@@ -38,10 +38,7 @@ const findPackage = async (id: string): Promise<IPackage> => {
 
 export const listPublicPackages = async (slug: string) => {
   const game = await getPublishedGameBySlug(slug);
-  return Package.find({ gameId: game._id, isAvailable: true }).sort({
-    sortOrder: 1,
-    name: 1,
-  });
+  return Package.find({ gameId: game._id }).sort({ sortOrder: 1, name: 1 });
 };
 
 export const listAdminPackages = async (gameId: string) => {

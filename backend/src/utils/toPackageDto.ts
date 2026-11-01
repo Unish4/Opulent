@@ -8,12 +8,12 @@ export const toPublicPackageDto = (pkg: IPackage) => ({
   description: pkg.description ?? null,
   badge: pkg.badge ?? null,
   pricePaisa: pkg.pricePaisa,
+  isAvailable: pkg.isAvailable,
 });
 
 export const toAdminPackageDto = (pkg: IPackage, includeCost: boolean) => ({
   ...toPublicPackageDto(pkg),
   costPaisa: includeCost ? (pkg.costPaisa ?? null) : null,
-  isAvailable: pkg.isAvailable,
   sortOrder: pkg.sortOrder,
   updatedAt: pkg.updatedAt,
 });

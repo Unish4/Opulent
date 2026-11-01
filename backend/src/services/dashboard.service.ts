@@ -1,11 +1,9 @@
-import { ENV } from "../config/env.js";
 import { Game } from "../models/Game.js";
-import { LookupUsage } from "../models/LookupUsage.js";
 import { Order } from "../models/Order.js";
 import { Package } from "../models/Package.js";
 import { Refund } from "../models/Refund.js";
 import type { IUser } from "../models/User.js";
-import { nepalDateString, type DateRange } from "../utils/dateRange.js";
+import type { DateRange } from "../utils/dateRange.js";
 
 const HAS_COST = {
   $in: [{ $type: "$costPaisaSnapshot" }, ["int", "long", "double", "decimal"]],
@@ -21,7 +19,6 @@ const toMinutes = (ms: number | null | undefined): number | null =>
 
 export const getDashboard = async (viewer: IUser, range: DateRange) => {
   const isOwner = viewer.role === "owner";
-  const today = nepalDateString(new Date());
   const completedMatch = {
     status: "completed",
     completedAt: { $gte: range.start, $lte: range.end },
@@ -36,7 +33,6 @@ export const getDashboard = async (viewer: IUser, range: DateRange) => {
     refundQueue,
     gamesPublished,
     packagesAvailable,
-    usage,
   ] = await Promise.all([
     Order.aggregate<{ _id: string; count: number }>([
       { $group: { _id: "$status", count: { $sum: 1 } } },
@@ -117,7 +113,6 @@ export const getDashboard = async (viewer: IUser, range: DateRange) => {
     ]),
     Game.countDocuments({ isPublished: true }),
     Package.countDocuments({ isAvailable: true }),
-    LookupUsage.findOne({ provider: "volsever", date: today }),
   ]);
 
   const open = countMap(openRows);
@@ -166,11 +161,5 @@ export const getDashboard = async (viewer: IUser, range: DateRange) => {
       estimatedProfitPaisa: isOwner ? row.salesWithCost - row.cost : null,
     })),
     catalogue: { gamesPublished, packagesAvailable },
-    lookup: {
-      provider: "volsever",
-      usedToday: usage?.count ?? 0,
-      dailyLimit: ENV.LOOKUP.DAILY_LIMIT,
-      keyConfigured: !!ENV.VOLSEVER.API_KEY,
-    },
   };
 };

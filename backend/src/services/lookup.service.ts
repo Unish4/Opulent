@@ -1,13 +1,13 @@
-import { ENV } from "../config/env.js";
 import type { IUser } from "../models/User.js";
 import type { PlayerFieldKey } from "../models/Game.js";
-import { LookupUsage } from "../models/LookupUsage.js";
 import { ApiError } from "../utils/ApiError.js";
 import { logger } from "../utils/logger.js";
 import { buildPlayerDetailsSchema } from "../validators/playerDetails.validator.js";
 import type { LookupBody } from "../validators/lookup.validator.js";
 import { getPublishedGameBySlug } from "./game.service.js";
+import { resolveApiKey, resolveKeyGroup } from "./lookup/keys.js";
 import { cacheKey, getCached, setCached } from "./lookup/lookupCache.js";
+import { allowPerMinute, reserveMonthlyQuota } from "./lookup/quota.js";
 import { LookupError, type PlayerLookupProvider } from "./lookup/types.js";
 import { VolseverProvider } from "./lookup/volsever.provider.js";
 import { signLookupToken } from "./lookupToken.service.js";
@@ -20,37 +20,6 @@ const unavailable = () =>
     "Player check is unavailable right now.",
     "LOOKUP_UNAVAILABLE",
   );
-
-const nepalDate = (): string =>
-  new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kathmandu" }).format(
-    new Date(),
-  );
-
-const isDuplicateKeyError = (err: unknown): boolean =>
-  typeof err === "object" &&
-  err !== null &&
-  "code" in err &&
-  err.code === 11000;
-
-// Atomic: the filter only matches while count is below the limit. Once the limit is reached the
-// upsert tries to insert a second (provider, date) document and the unique index rejects it.
-const reserveDailyQuota = async (providerName: string): Promise<boolean> => {
-  try {
-    await LookupUsage.findOneAndUpdate(
-      {
-        provider: providerName,
-        date: nepalDate(),
-        count: { $lt: ENV.LOOKUP.DAILY_LIMIT },
-      },
-      { $inc: { count: 1 } },
-      { upsert: true, new: true },
-    );
-    return true;
-  } catch (err) {
-    if (isDuplicateKeyError(err)) return false;
-    throw err;
-  }
-};
 
 export const lookupPlayer = async (
   user: IUser,
@@ -80,19 +49,31 @@ export const lookupPlayer = async (
   const playerId = parsed.playerId as string;
   const serverId = hasServer ? (parsed.serverId as string) : undefined;
 
-  if (!ENV.VOLSEVER.API_KEY) throw unavailable();
+  const apiKey = resolveApiKey(game.slug);
+  if (!apiKey) throw unavailable();
 
   const key = cacheKey(providerGameCode, playerId, serverId);
-  let result = getCached(key);
+  let result = await getCached(key);
 
   if (!result) {
-    if (!(await reserveDailyQuota(provider.name))) {
-      logger.warn({ provider: provider.name }, "Lookup daily quota reached");
+    const quotaKey = `volsever:${resolveKeyGroup(game.slug)}`;
+
+    if (!allowPerMinute(quotaKey)) {
+      logger.warn({ quotaKey }, "Lookup per-minute limit reached");
+      throw unavailable();
+    }
+    if (!(await reserveMonthlyQuota(quotaKey))) {
+      logger.warn({ quotaKey }, "Lookup monthly quota reached");
       throw unavailable();
     }
 
     try {
-      result = await provider.lookup({ providerGameCode, playerId, serverId });
+      result = await provider.lookup({
+        providerGameCode,
+        playerId,
+        serverId,
+        apiKey,
+      });
     } catch (err) {
       if (err instanceof LookupError) {
         if (err.kind === "not_found") {
@@ -112,7 +93,7 @@ export const lookupPlayer = async (
       throw unavailable();
     }
 
-    setCached(key, result);
+    await setCached(key, result);
   }
 
   const { token, expiresAt } = await signLookupToken(String(user._id), {

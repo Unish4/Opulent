@@ -144,10 +144,22 @@ export default function AdminGameFormPage() {
     updateGame.mutate(toPayload(values, uploaded, false), {
       onSuccess: () => {
         setUploaded(null);
-        toast.success("Game saved");
+        toast.success("Game saved successfully");
       },
       onError: (err) => toast.error(err.message),
     });
+  };
+
+  const onInvalid = (formErrors: typeof errors) => {
+    const firstKey = Object.keys(formErrors)[0];
+    const firstErr = firstKey
+      ? (formErrors as Record<string, any>)[firstKey]
+      : null;
+    const msg =
+      firstErr?.message ||
+      firstErr?.root?.message ||
+      "Please check the form for errors before saving.";
+    toast.error(typeof msg === "string" ? msg : "Validation error");
   };
 
   if (!isNew && isLoading) return <LoadingSpinner />;
@@ -168,7 +180,11 @@ export default function AdminGameFormPage() {
         {isNew ? "New game" : `Edit ${game?.name ?? "game"}`}
       </h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+      <form
+        onSubmit={handleSubmit(onSubmit, onInvalid)}
+        className="space-y-6"
+        noValidate
+      >
         <Card className="space-y-4 p-5">
           <h2 className="font-display text-white font-semibold">Basics</h2>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -238,7 +254,7 @@ export default function AdminGameFormPage() {
               variant="secondary"
               size="sm"
               onClick={() => append(NEW_FIELD)}
-              disabled={fields.length >= 4}
+              disabled={fields.length >= 5}
             >
               <Plus size={14} /> Add field
             </Button>
@@ -266,6 +282,8 @@ export default function AdminGameFormPage() {
                     <option value="serverId">Server ID</option>
                     <option value="playerName">Player name</option>
                     <option value="email">Email</option>
+                    <option value="login">Login (username or email)</option>
+                    <option value="password">Password</option>
                   </Select>
                 </Field>
               </div>
@@ -284,6 +302,7 @@ export default function AdminGameFormPage() {
                     <option value="alphanumeric">Letters and numbers</option>
                     <option value="text">Any text</option>
                     <option value="email">Email</option>
+                    <option value="password">Password (masked)</option>
                   </Select>
                 </Field>
               </div>
@@ -394,7 +413,12 @@ export default function AdminGameFormPage() {
           </div>
         </Card>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex items-center justify-end gap-3">
+          {uploaded && (
+            <span className="text-xs font-medium text-amber">
+              Artwork uploaded (unsaved)
+            </span>
+          )}
           <Button
             type="button"
             variant="ghost"

@@ -18,6 +18,9 @@ import CheckoutPage from "./pages/CheckoutPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import HelpPage from "./pages/HelpPage";
+import TermsPage from "./pages/TermsPage";
+import RefundPolicyPage from "./pages/RefundPolicyPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 
 const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
 const AdminDashboardPage = lazy(
@@ -105,6 +108,9 @@ export default function App() {
             <Route index element={<HomePage />} />
             <Route path="games" element={<GamesPage />} />
             <Route path="help" element={<HelpPage />} />
+            <Route path="terms" element={<TermsPage />} />
+            <Route path="refund-policy" element={<RefundPolicyPage />} />
+            <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="games/:slug" element={<GamePage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="account" element={<AccountPage />} />

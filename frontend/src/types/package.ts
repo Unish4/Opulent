@@ -8,6 +8,7 @@ export interface PublicPackage {
   description: string | null;
   badge: string | null;
   pricePaisa: number;
+  isAvailable: boolean;
 }
 
 export interface AdminPackage extends PublicPackage {

@@ -2,6 +2,7 @@ import type { IOrder } from "../models/Order.js";
 import type { ITimelineEvent } from "../models/TimelineEvent.js";
 import type { IUser } from "../models/User.js";
 import { getAllowedActions } from "./allowedActions.js";
+import { canRevealPassword } from "./credentialAccess.js";
 
 export type UserMap = Map<string, IUser>;
 
@@ -21,6 +22,7 @@ export const toAdminOrderListItem = (order: IOrder, users: UserMap) => ({
   playerId: order.playerDetails.playerId ?? null,
   serverId: order.playerDetails.serverId ?? null,
   email: order.playerDetails.email ?? null,
+  login: order.playerDetails.login ?? null,
   playerName: order.playerDetails.playerName ?? null,
   nameUnverified: order.playerDetails.playerNameSource === "customer_typed",
   customerName: nameOf(users, order.userId),
@@ -58,6 +60,8 @@ export const toAdminOrderDetail = (
       serverId: order.playerDetails.serverId ?? null,
       playerName: order.playerDetails.playerName ?? null,
       email: order.playerDetails.email ?? null,
+      login: order.playerDetails.login ?? null,
+      password: order.playerDetails.password ?? null,
       playerNameSource: order.playerDetails.playerNameSource,
     },
     lookup: order.lookupSnapshot
@@ -69,6 +73,9 @@ export const toAdminOrderDetail = (
         }
       : null,
     nameUnverified: order.playerDetails.playerNameSource === "customer_typed",
+    hasCredential: order.hasCredential,
+    canRevealPassword: canRevealPassword(order, viewer),
+    credentialRevealCount: order.credentialRevealCount,
     customer: customer
       ? {
           id: String(customer._id),

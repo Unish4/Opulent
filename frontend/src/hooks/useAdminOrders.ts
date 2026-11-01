@@ -85,3 +85,12 @@ export function useAdminOrderAction(id: string | undefined) {
     },
   });
 }
+
+export function useRevealPassword(id: string | undefined) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (): Promise<string> =>
+      api.post(`/admin/orders/${id}/reveal-password`).then((res) => res.data.data.password),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "order", id] }),
+  });
+}

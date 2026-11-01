@@ -2,9 +2,7 @@ import { z } from "zod";
 import type { IPlayerField, PlayerFieldKey } from "../models/Game.js";
 
 const buildFieldSchema = (field: IPlayerField) => {
-  let schema = z
-    .string()
-    .trim()
+  let schema = (field.key === "password" ? z.string() : z.string().trim())
     .min(1, `${field.label} is required`)
     .min(
       field.minLength,

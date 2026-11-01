@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
-import { Gem } from "lucide-react";
+import Logo from "../Logo";
 
 interface AuthShellProps {
   title: string;
@@ -21,12 +21,8 @@ export default function AuthShell({
     <div className="min-h-screen bg-base">
       <header className="h-16 border-b border-line bg-surface">
         <div className="mx-auto flex h-full max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link
-            to="/"
-            className="flex items-center gap-2 font-display text-lg font-semibold"
-          >
-            <Gem size={20} className="text-primary-hover" />
-            Opulent
+          <Link to="/" aria-label="Opulent home">
+            <Logo />
           </Link>
           <Link to={altTo} className="text-sm text-secondary hover:text-fg">
             {altText}

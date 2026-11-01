@@ -30,23 +30,28 @@ export default function PackageGrid({
           <h3 className="mb-3 text-sm font-semibold text-secondary">{group}</h3>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {items.map((pkg) => {
-              const selected = pkg.id === selectedId;
+              const unavailable = !pkg.isAvailable;
+              const selected = pkg.id === selectedId && !unavailable;
               return (
                 <button
                   key={pkg.id}
                   type="button"
-                  disabled={disabled}
+                  disabled={disabled || unavailable}
                   aria-pressed={selected}
                   onClick={() => onSelect(pkg.id)}
                   className={cn(
                     "relative flex min-h-24 flex-col items-center justify-center gap-1 rounded-lg border p-3 text-center transition-colors",
-                    "disabled:cursor-not-allowed disabled:opacity-50",
-                    selected
-                      ? "border-primary bg-primary/15"
-                      : "border-line bg-elevated hover:border-primary-hover",
+                    "disabled:cursor-not-allowed",
+                    unavailable
+                      ? "border-dashed border-line bg-elevated/50 opacity-60"
+                      : disabled
+                        ? "opacity-50"
+                        : selected
+                          ? "border-primary bg-primary/15"
+                          : "border-line bg-elevated hover:border-primary-hover",
                   )}
                 >
-                  {pkg.badge && (
+                  {pkg.badge && !unavailable && (
                     <span className="absolute -top-2 right-2">
                       <Badge tone="amber">{pkg.badge}</Badge>
                     </span>
@@ -57,9 +62,13 @@ export default function PackageGrid({
                       {pkg.description}
                     </span>
                   )}
-                  <span className="font-mono text-white font-semibold text-amber">
-                    {formatNpr(pkg.pricePaisa)}
-                  </span>
+                  {unavailable ? (
+                    <Badge>Unavailable</Badge>
+                  ) : (
+                    <span className="font-mono text-white font-semibold text-amber">
+                      {formatNpr(pkg.pricePaisa)}
+                    </span>
+                  )}
                 </button>
               );
             })}

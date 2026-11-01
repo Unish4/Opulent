@@ -1,13 +1,6 @@
 import { ENV } from "../../config/env.js";
+import { LookupCache } from "../../models/LookupCache.js";
 import type { PlayerLookupResult } from "./types.js";
-
-interface Entry {
-  value: PlayerLookupResult;
-  expiresAt: number;
-}
-
-const MAX_ENTRIES = 1000;
-const store = new Map<string, Entry>();
 
 export const cacheKey = (
   providerGameCode: string,
@@ -15,23 +8,35 @@ export const cacheKey = (
   serverId?: string,
 ): string => `${providerGameCode}:${playerId}:${serverId ?? ""}`;
 
-export const getCached = (key: string): PlayerLookupResult | null => {
-  const entry = store.get(key);
+export const getCached = async (
+  key: string,
+): Promise<PlayerLookupResult | null> => {
+  const entry = await LookupCache.findOne({
+    key,
+    expiresAt: { $gt: new Date() },
+  });
   if (!entry) return null;
-  if (entry.expiresAt < Date.now()) {
-    store.delete(key);
-    return null;
-  }
-  return entry.value;
+  return {
+    playerName: entry.playerName,
+    level: entry.level,
+    region: entry.region,
+  };
 };
 
-export const setCached = (key: string, value: PlayerLookupResult): void => {
-  if (store.size >= MAX_ENTRIES) {
-    const oldest = store.keys().next().value;
-    if (oldest !== undefined) store.delete(oldest);
-  }
-  store.set(key, {
-    value,
-    expiresAt: Date.now() + ENV.LOOKUP.CACHE_TTL_SECONDS * 1000,
-  });
+export const setCached = async (
+  key: string,
+  value: PlayerLookupResult,
+): Promise<void> => {
+  await LookupCache.findOneAndUpdate(
+    { key },
+    {
+      $set: {
+        playerName: value.playerName,
+        level: value.level,
+        region: value.region,
+        expiresAt: new Date(Date.now() + ENV.LOOKUP.CACHE_TTL_SECONDS * 1000),
+      },
+    },
+    { upsert: true },
+  );
 };

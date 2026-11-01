@@ -21,12 +21,19 @@ export const slugParamSchema = z.object({
 
 const playerFieldInputSchema = z
   .object({
-    key: z.enum(["playerId", "serverId", "playerName", "email"]),
+    key: z.enum([
+      "playerId",
+      "serverId",
+      "playerName",
+      "email",
+      "login",
+      "password",
+    ]),
     label: z.string().trim().min(1).max(40),
     placeholder: z.string().trim().max(60).optional(),
     helpText: z.string().trim().max(200).optional(),
     required: z.boolean(),
-    ruleType: z.enum(["digits", "alphanumeric", "text", "email"]),
+    ruleType: z.enum(["digits", "alphanumeric", "text", "email", "password"]),
     minLength: z.number().int().min(1).max(100),
     maxLength: z.number().int().min(1).max(100),
   })
@@ -61,7 +68,7 @@ const gameShape = {
   publisher: z.string().trim().max(60).optional(),
   description: z.string().trim().max(500).optional(),
   instructions: z.string().trim().max(1000).optional(),
-  playerFields: z.array(playerFieldInputSchema).min(1).max(4),
+  playerFields: z.array(playerFieldInputSchema).min(1).max(5),
   lookup: z
     .object({
       enabled: z.boolean(),

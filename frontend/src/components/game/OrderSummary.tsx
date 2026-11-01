@@ -48,8 +48,14 @@ export default function OrderSummary({
           >
             <dt className="text-secondary">{field.label}</dt>
             <dd className="max-w-[60%] truncate text-right font-mono text-fg">
-              {values[field.key]?.trim() || (
-                <Badge tone="amber">Required</Badge>
+              {field.key === "password" ? (
+                values.password ? (
+                  "••••••••"
+                ) : (
+                  <Badge tone="amber">Required</Badge>
+                )
+              ) : (
+                values[field.key]?.trim() || <Badge tone="amber">Required</Badge>
               )}
             </dd>
           </div>

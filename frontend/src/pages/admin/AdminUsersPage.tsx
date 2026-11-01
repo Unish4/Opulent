@@ -12,7 +12,6 @@ import { formatDateTime } from "../../utils/time";
 
 export default function AdminUsersPage() {
   const [params, setParams] = useSearchParams();
-  const role = params.get("role") ?? "";
   const status = params.get("status") ?? "";
   const q = params.get("q") ?? "";
   const page = Number(params.get("page") ?? 1) || 1;
@@ -42,7 +41,7 @@ export default function AdminUsersPage() {
   const { data, isLoading, isError, error, refetch, isPlaceholderData } =
     useAdminUsers({
       q: q || undefined,
-      role: role || undefined,
+      role: "customer",
       status: status || undefined,
       page,
       limit: 20,
@@ -59,24 +58,14 @@ export default function AdminUsersPage() {
         </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-3">
         <SearchInput
           className="sm:col-span-2"
           value={qInput}
           onChange={setQInput}
           placeholder="Name, email or phone"
-          label="Search accounts"
+          label="Search customers"
         />
-        <Select
-          aria-label="Role"
-          value={role}
-          onChange={(e) => update({ role: e.target.value || undefined })}
-        >
-          <option value="">Any role</option>
-          <option value="customer">Customers</option>
-          <option value="operator">Operators</option>
-          <option value="owner">Owners</option>
-        </Select>
         <Select
           aria-label="Status"
           value={status}
@@ -99,7 +88,7 @@ export default function AdminUsersPage() {
         <ErrorState message={error.message} onRetry={() => refetch()} />
       )}
       {data && data.users.length === 0 && (
-        <EmptyState title="No accounts found" />
+        <EmptyState title="No customers found" />
       )}
 
       <div
@@ -118,9 +107,6 @@ export default function AdminUsersPage() {
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                {user.role !== "customer" && (
-                  <Badge tone="primary">{user.role}</Badge>
-                )}
                 {user.status !== "active" && (
                   <Badge tone="amber">{user.status}</Badge>
                 )}

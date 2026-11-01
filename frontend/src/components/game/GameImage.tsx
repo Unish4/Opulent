@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { optimizeImage } from "../../utils/image";
 import { cn } from "../../utils/cn";
 
@@ -5,18 +6,35 @@ interface GameImageProps {
   src: string | null;
   name: string;
   width?: number;
+  height?: number;
   className?: string;
+  crop?: "fill" | "limit" | "fit" | "scale";
+  gravity?: "auto" | "center" | string;
 }
 
 export default function GameImage({
   src,
   name,
   width = 400,
+  height,
   className,
+  crop = "fill",
+  gravity = "center",
 }: GameImageProps) {
-  const optimized = optimizeImage(src, width);
+  const [hasError, setHasError] = useState(false);
+  const optimized = optimizeImage(src, width, {
+    height,
+    crop,
+    gravity,
+    quality: "auto:best",
+    dpr: "2.0",
+  });
 
-  if (!optimized) {
+  useEffect(() => {
+    setHasError(false);
+  }, [src]);
+
+  if (!optimized || hasError) {
     return (
       <div
         role="img"
@@ -36,7 +54,8 @@ export default function GameImage({
       src={optimized}
       alt={name}
       loading="lazy"
-      className={cn("object-cover", className)}
+      onError={() => setHasError(true)}
+      className={cn("object-cover object-center", className)}
     />
   );
 }

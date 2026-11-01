@@ -12,7 +12,8 @@ export default function GameCard({ game }: { game: GameListItem }) {
       <GameImage
         src={game.imageUrl}
         name={game.name}
-        className="aspect-square w-full transition-transform duration-300 group-hover:scale-105"
+        width={350}
+        className="aspect-square w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
       />
       <div className="space-y-1 p-3">
         <h3 className="truncate font-display text-sm font-semibold sm:text-white">

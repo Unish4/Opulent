@@ -39,6 +39,8 @@ const ACTIONS = [
   "refund_paid_out",
   "user_status_changed",
   "payment_config_changed",
+  "lookup_usage_adjusted",
+  "order_credential_revealed",
 ];
 
 const label = (action: string): string => action.replace(/_/g, " ");

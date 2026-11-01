@@ -12,13 +12,17 @@ export const uploadImageBuffer = (
   folder: string,
 ): Promise<UploadedImage> =>
   new Promise((resolve, reject) => {
+    let settled = false;
+
     const stream = cloudinary.uploader.upload_stream(
       {
         folder,
         resource_type: "image",
-        transformation: [{ width: 1000, height: 1000, crop: "limit" }],
+        transformation: [{ width: 2560, height: 2560, crop: "limit" }],
       },
       (error, result) => {
+        if (settled) return;
+        settled = true;
         if (error || !result) {
           logger.error({ err: error }, "Cloudinary upload failed");
           reject(new ApiError(503, "Image upload failed. Please try again."));
@@ -27,6 +31,14 @@ export const uploadImageBuffer = (
         resolve({ url: result.secure_url, publicId: result.public_id });
       },
     );
+
+    stream.on("error", (streamErr) => {
+      if (settled) return;
+      settled = true;
+      logger.error({ err: streamErr }, "Cloudinary upload stream error");
+      reject(new ApiError(503, "Image upload failed. Please try again."));
+    });
+
     stream.end(buffer);
   });
 

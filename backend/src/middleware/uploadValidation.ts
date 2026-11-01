@@ -3,7 +3,7 @@ import multer from "multer";
 import { fileTypeFromBuffer } from "file-type";
 import { ApiError } from "../utils/ApiError.js";
 
-const MAX_BYTES = 2 * 1024 * 1024;
+const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 const upload = multer({
@@ -24,7 +24,7 @@ export const uploadSingleImage: RequestHandler = (req, res, next) => {
     if (err instanceof multer.MulterError) {
       const message =
         err.code === "LIMIT_FILE_SIZE"
-          ? "Image must be 2 MB or smaller"
+          ? "Image must be 5 MB or smaller"
           : "Invalid upload";
       return next(new ApiError(400, message));
     }

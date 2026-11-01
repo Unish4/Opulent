@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router";
-import { Gem, LogIn, Menu, ShieldCheck, User, X } from "lucide-react";
+import { LogIn, Menu, ShieldCheck, User, X } from "lucide-react";
 import { Show, UserButton } from "@clerk/react";
+import Footer from "../components/Footer";
+import Logo from "../components/Logo";
+import WhatsAppFloat from "../components/WhatsAppFloat";
 import { useCurrentUser } from "../hooks/useCurrentUser";
 import { isAdminRole } from "../types/user";
 import { cn } from "../utils/cn";
@@ -35,6 +38,7 @@ export default function Root() {
       >
         Skip to content
       </a>
+
       <header className="sticky top-0 z-30 border-b border-line bg-surface/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6">
           <button
@@ -48,12 +52,8 @@ export default function Root() {
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
 
-          <Link
-            to="/"
-            className="flex items-center gap-2 font-display text-lg font-semibold"
-          >
-            <Gem size={20} className="text-primary-hover" />
-            Opulent
+          <Link to="/" aria-label="Opulent home">
+            <Logo />
           </Link>
 
           <nav
@@ -154,11 +154,9 @@ export default function Root() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-line bg-surface">
-        <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-muted sm:px-6">
-          © {new Date().getFullYear()} Opulent. All prices in NPR.
-        </div>
-      </footer>
+      <Footer />
+
+      <WhatsAppFloat />
     </div>
   );
 }

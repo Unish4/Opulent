@@ -11,6 +11,7 @@ export const createOrderSchema = z
     expectedPricePaisa: z.number().int().positive().max(10_000_000),
     playerDetails: z.record(z.string().max(30), z.string().max(100)),
     lookupToken: z.string().min(20).max(2000).optional(),
+    credentialConsent: z.literal(true).optional(),
   })
   .strict();
 

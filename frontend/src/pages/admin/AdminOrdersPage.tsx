@@ -184,7 +184,7 @@ export default function AdminOrdersPage() {
                     </span>
                   </p>
                   <p className="mt-1 truncate font-mono text-xs text-muted">
-                    {order.playerId ?? order.email ?? "-"}
+                    {order.playerId ?? order.email ?? order.login ?? "-"}
                     {order.serverId ? ` (${order.serverId})` : ""}
                     {order.playerName ? ` · ${order.playerName}` : ""}
                   </p>

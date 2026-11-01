@@ -100,6 +100,12 @@ export default function CheckoutPage() {
                   <dd className="font-mono">{order.playerDetails.playerId}</dd>
                 </div>
               )}
+              {order.playerDetails.login && (
+                <div className="flex justify-between gap-3">
+                  <dt className="text-secondary">Login</dt>
+                  <dd className="font-mono">{order.playerDetails.login}</dd>
+                </div>
+              )}
               {order.playerDetails.serverId && (
                 <div className="flex justify-between gap-3">
                   <dt className="text-secondary">Server ID</dt>
@@ -110,6 +116,12 @@ export default function CheckoutPage() {
                 <div className="flex justify-between gap-3">
                   <dt className="text-secondary">Account email</dt>
                   <dd className="font-mono">{order.playerDetails.email}</dd>
+                </div>
+              )}
+              {order.playerDetails.password && (
+                <div className="flex justify-between gap-3">
+                  <dt className="text-secondary">Password</dt>
+                  <dd className="font-mono">••••••••</dd>
                 </div>
               )}
               {order.playerDetails.playerName && (

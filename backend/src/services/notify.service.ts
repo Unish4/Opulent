@@ -1,4 +1,5 @@
 import { ENV } from "../config/env.js";
+import type { IOrder } from "../models/Order.js";
 import { logger } from "../utils/logger.js";
 
 export const sendAdminAlert = async (text: string): Promise<boolean> => {
@@ -33,4 +34,9 @@ export const sendAdminAlert = async (text: string): Promise<boolean> => {
     logger.warn({ err }, "Telegram alert error");
     return false;
   }
+};
+
+export const alertProofSignal = async (order: IOrder): Promise<boolean> => {
+  const text = `Proof signaled for order ${order.reference}\nGame: ${order.gameSnapshot.name}\nPackage: ${order.packageSnapshot.name}\nAmount: NPR ${order.pricePaisaSnapshot / 100}`;
+  return sendAdminAlert(text);
 };

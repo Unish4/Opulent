@@ -8,8 +8,9 @@ import type { ListUsersQuery } from "../validators/adminUser.validator.js";
 import { writeAuditLog } from "./audit.service.js";
 
 export const listUsers = async (query: ListUsersQuery) => {
-  const filter: Record<string, unknown> = {};
-  if (query.role) filter.role = query.role;
+  const filter: Record<string, unknown> = {
+    role: query.role || "customer",
+  };
   if (query.status) filter.status = query.status;
   if (query.q) {
     const regex = new RegExp(escapeRegex(query.q.trim()), "i");

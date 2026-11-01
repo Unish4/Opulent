@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "@clerk/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useWatch, type Resolver } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import toast from "react-hot-toast";
 import ConfirmDialog from "../ConfirmDialog";
 import EmptyState from "../EmptyState";
@@ -30,6 +30,11 @@ interface GameOrderPanelProps {
   packages: PublicPackage[];
 }
 
+const withoutPassword = (values: PlayerFormValues): PlayerFormValues =>
+  Object.fromEntries(
+    Object.entries(values).filter(([key]) => key !== "password"),
+  );
+
 export default function GameOrderPanel({
   game,
   packages,
@@ -41,22 +46,27 @@ export default function GameOrderPanel({
 
   const draft = useMemo(() => loadDraft(game.slug), [game.slug]);
   const [selectedId, setSelectedId] = useState<string | null>(() =>
-    draft?.packageId && packages.some((pkg) => pkg.id === draft.packageId)
+    draft?.packageId &&
+    packages.some((pkg) => pkg.id === draft.packageId && pkg.isAvailable)
       ? draft.packageId
       : null,
   );
   const [checked, setChecked] = useState<CheckedPlayer | null>(null);
   const [confirmed, setConfirmed] = useState(false);
+  const [credentialConsent, setCredentialConsent] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [priceChange, setPriceChange] = useState<{
     from: number;
     to: number;
   } | null>(null);
   const [idempotencyKey] = useState(() => crypto.randomUUID());
-
+  const lookupValidRef = useRef(false);
 
   const hasServerField = game.playerFields.some(
     (field) => field.key === "serverId",
+  );
+  const hasPasswordField = game.playerFields.some(
+    (field) => field.key === "password",
   );
   const fieldsWithoutName = useMemo(
     () => game.playerFields.filter((field) => field.key !== "playerName"),
@@ -70,15 +80,10 @@ export default function GameOrderPanel({
     const withoutName = zodResolver(
       buildPlayerSchema(fieldsWithoutName),
     ) as unknown as Resolver<PlayerFormValues>;
-    const pick: Resolver<PlayerFormValues> = (values, context, options) => {
-      const pid = (values.playerId ?? "").trim();
-      const sid = (values.serverId ?? "").trim();
-      const valid =
-        !!checked && checked.playerId === pid && checked.serverId === sid;
-      return (valid ? withoutName : full)(values, context, options);
-    };
+    const pick: Resolver<PlayerFormValues> = (values, context, options) =>
+      (lookupValidRef.current ? withoutName : full)(values, context, options);
     return pick;
-  }, [game.playerFields, fieldsWithoutName, checked]);
+  }, [game.playerFields, fieldsWithoutName]);
 
   const defaultValues = useMemo(() => {
     const base = Object.fromEntries(
@@ -86,7 +91,8 @@ export default function GameOrderPanel({
     ) as PlayerFormValues;
     if (!draft) return base;
     for (const field of game.playerFields) {
-      base[field.key] = draft.values[field.key] ?? "";
+      if (field.key !== "password")
+        base[field.key] = draft.values[field.key] ?? "";
     }
     return base;
   }, [game.playerFields, draft]);
@@ -94,26 +100,24 @@ export default function GameOrderPanel({
   const {
     register,
     handleSubmit,
-    control,
+    watch,
     trigger,
     getValues,
     formState: { errors },
   } = useForm<PlayerFormValues>({ resolver, defaultValues, mode: "onTouched" });
 
-  const values = useWatch({
-    control,
-    defaultValue: defaultValues,
-  }) as PlayerFormValues;
+  const values = watch();
   const playerId = (values.playerId ?? "").trim();
   const serverId = (values.serverId ?? "").trim();
   const lookupValid =
     !!checked && checked.playerId === playerId && checked.serverId === serverId;
 
+  useEffect(() => {
+    lookupValidRef.current = lookupValid;
+  }, [lookupValid]);
 
-
-
-
-  const selected = packages.find((pkg) => pkg.id === selectedId) ?? null;
+  const selected =
+    packages.find((pkg) => pkg.id === selectedId && pkg.isAvailable) ?? null;
   const visibleFields = lookupValid ? fieldsWithoutName : game.playerFields;
   const summaryValues: PlayerFormValues =
     lookupValid && checked
@@ -133,7 +137,11 @@ export default function GameOrderPanel({
   };
 
   const goToSignIn = () => {
-    saveDraft({ slug: game.slug, packageId: selectedId, values: getValues() });
+    saveDraft({
+      slug: game.slug,
+      packageId: selectedId,
+      values: withoutPassword(getValues()),
+    });
     navigate(
       `/sign-in?redirect_url=${encodeURIComponent(`/games/${game.slug}`)}`,
     );
@@ -148,6 +156,10 @@ export default function GameOrderPanel({
       toast.error("Please confirm this is your account");
       return;
     }
+    if (hasPasswordField && !credentialConsent) {
+      toast.error("Please confirm that our team may sign in to your account");
+      return;
+    }
     if (!isSignedIn) {
       goToSignIn();
       return;
@@ -160,7 +172,8 @@ export default function GameOrderPanel({
     const current = getValues();
     const playerDetails: Record<string, string> = {};
     for (const field of visibleFields) {
-      const value = (current[field.key] ?? "").trim();
+      const raw = current[field.key] ?? "";
+      const value = field.key === "password" ? raw : raw.trim();
       if (value) playerDetails[field.key] = value;
     }
 
@@ -175,6 +188,7 @@ export default function GameOrderPanel({
           ...(lookupValid && checked
             ? { lookupToken: checked.lookupToken }
             : {}),
+          ...(hasPasswordField ? { credentialConsent: true } : {}),
         },
       },
       {
@@ -206,9 +220,10 @@ export default function GameOrderPanel({
 
   const reviewText = selected
     ? `${game.name}: ${selected.name} for ${formatNpr(selected.pricePaisa)}. ${game.playerFields
-        .map(
-          (field) =>
-            `${field.label}: ${summaryValues[field.key]?.trim() || "-"}`,
+        .map((field) =>
+          field.key === "password"
+            ? `${field.label}: (hidden)`
+            : `${field.label}: ${summaryValues[field.key]?.trim() || "-"}`,
         )
         .join(
           ", ",
@@ -249,6 +264,30 @@ export default function GameOrderPanel({
                 onRequireSignIn={goToSignIn}
                 disabled={!game.acceptingOrders}
               />
+            )}
+            {hasPasswordField && (
+              <div className="mt-4 space-y-3 rounded-lg border border-amber/40 bg-amber/10 p-4 text-sm">
+                <p className="text-amber">
+                  This game can only be topped up by signing in to your account.
+                  Your password is stored encrypted, only the admin handling
+                  your order can see it, and it is deleted when your order is
+                  finished. Never send your password in a WhatsApp message, and
+                  change it after the top-up. Some game publishers do not allow
+                  others to sign in to your account.
+                </p>
+                <label className="flex items-start gap-2 text-fg">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 size-4 accent-primary"
+                    checked={credentialConsent}
+                    onChange={(e) => setCredentialConsent(e.target.checked)}
+                  />
+                  <span>
+                    I agree that Opulent's team may sign in to my account to
+                    complete this top-up.
+                  </span>
+                </label>
+              </div>
             )}
           </Card>
 

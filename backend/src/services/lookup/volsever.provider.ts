@@ -14,6 +14,7 @@ interface VolseverResponse {
     username?: string;
     level?: number | null;
     region?: string | null;
+    [key: string]: unknown;
   };
 }
 
@@ -32,10 +33,8 @@ export class VolseverProvider implements PlayerLookupProvider {
     providerGameCode,
     playerId,
     serverId,
+    apiKey,
   }: PlayerLookupInput): Promise<PlayerLookupResult> {
-    const apiKey = ENV.VOLSEVER.API_KEY;
-    if (!apiKey)
-      throw new LookupError("unavailable", "Provider key is not configured");
     if (!SLUG.test(providerGameCode))
       throw new LookupError("invalid_input", "Bad provider game code");
 
@@ -68,7 +67,11 @@ export class VolseverProvider implements PlayerLookupProvider {
         throw new LookupError("unavailable", "Provider returned invalid JSON");
       }
 
-      const username = body.data?.username ? cleanName(body.data.username) : "";
+      const rawName =
+        body.data?.username ??
+        (body.data as Record<string, unknown> | undefined)?.name ??
+        (body.data as Record<string, unknown> | undefined)?.nickname;
+      const username = rawName ? cleanName(String(rawName)) : "";
       if (body.status === true && username) {
         return {
           playerName: username,
@@ -79,7 +82,12 @@ export class VolseverProvider implements PlayerLookupProvider {
         };
       }
 
-      if (body.code === 404 || /not\s*found/i.test(body.message ?? "")) {
+      if (
+        body.code === 404 ||
+        /not\s*found|invalid\s*(?:user|account|id|player)/i.test(
+          body.message ?? "",
+        )
+      ) {
         throw new LookupError("not_found");
       }
       throw new LookupError("unavailable", "Unexpected provider response");

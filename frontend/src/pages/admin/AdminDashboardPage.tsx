@@ -12,6 +12,7 @@ import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { cn } from "../../utils/cn";
 import { formatNpr } from "../../utils/money";
 import { formatMinutes, nepalDay, nepalDaysAgo } from "../../utils/time";
+import LookupUsageCard from "../../components/admin/LookupUsageCard";
 
 const PRESETS = [
   { label: "Today", days: 0 },
@@ -57,12 +58,6 @@ export default function AdminDashboardPage() {
     1,
     ...(data?.byGame.map((game) => game.salesPaisa) ?? [1]),
   );
-  const lookupPercent = data
-    ? Math.min(
-        100,
-        Math.round((data.lookup.usedToday / data.lookup.dailyLimit) * 100),
-      )
-    : 0;
 
   const exportCsv = async () => {
     setExporting(true);
@@ -265,40 +260,14 @@ export default function AdminDashboardPage() {
             </Card>
           </section>
 
-          <section
-            aria-labelledby="system"
-            className="grid gap-3 sm:grid-cols-2"
-          >
+          <section aria-labelledby="system" className="grid gap-3 sm:grid-cols-2">
+            <LookupUsageCard />
             <Card className="space-y-2 p-5">
               <h2 id="system" className="font-display text-white font-semibold">
-                Player lookup today
-              </h2>
-              <p className="font-mono text-lg">
-                {data.lookup.usedToday} / {data.lookup.dailyLimit}
-              </p>
-              <div className="h-2 rounded-full bg-elevated">
-                <div
-                  className={cn(
-                    "h-2 rounded-full",
-                    lookupPercent >= 90 ? "bg-danger" : "bg-success",
-                  )}
-                  style={{ width: `${lookupPercent}%` }}
-                />
-              </div>
-              <p className="text-xs text-muted">
-                {data.lookup.keyConfigured
-                  ? "Provider key is set."
-                  : "No provider key is set, so lookups are off."}{" "}
-                Quota resets at midnight Nepal time.
-              </p>
-            </Card>
-            <Card className="space-y-2 p-5">
-              <h2 className="font-display text-white font-semibold">
                 Catalogue
               </h2>
               <p className="text-sm text-secondary">
-                {data.catalogue.gamesPublished} published games,{" "}
-                {data.catalogue.packagesAvailable} available packages.
+                {data.catalogue.gamesPublished} published games, {data.catalogue.packagesAvailable} available packages.
               </p>
             </Card>
           </section>

@@ -29,6 +29,8 @@ export interface OrderDto {
     serverId: string | null;
     playerName: string | null;
     email: string | null;
+    login: string | null;
+    password?: string | null;
     playerNameSource: "lookup" | "customer_typed" | "not_applicable";
   };
   lookup: {
@@ -46,6 +48,7 @@ export interface CreateOrderPayload {
   expectedPricePaisa: number;
   playerDetails: Record<string, string>;
   lookupToken?: string;
+  credentialConsent?: boolean;
 }
 
 export interface OrderListItem {

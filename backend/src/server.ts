@@ -25,6 +25,7 @@ import adminDashboardRouter from "./routes/adminDashboard.routes.js";
 import adminUserRouter from "./routes/adminUser.routes.js";
 import adminPaymentConfigRouter from "./routes/adminPaymentConfig.routes.js";
 import adminAuditLogRouter from "./routes/adminAuditLog.routes.js";
+import adminLookupRouter from "./routes/adminLookup.routes.js";
 
 const app = express();
 
@@ -75,6 +76,7 @@ app.use("/api/admin/dashboard", adminDashboardRouter);
 app.use("/api/admin/users", adminUserRouter);
 app.use("/api/admin/payment-config", adminPaymentConfigRouter);
 app.use("/api/admin/audit-logs", adminAuditLogRouter);
+app.use("/api/admin/lookup", adminLookupRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

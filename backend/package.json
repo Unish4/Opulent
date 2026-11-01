@@ -14,7 +14,8 @@
     "cleanup:stale": "tsx src/scripts/cleanupStaleOrders.ts",
     "cleanup:stale:prod": "node dist/scripts/cleanupStaleOrders.js",
     "remind:waiting": "tsx src/scripts/remindWaiting.ts",
-    "remind:waiting:prod": "node dist/scripts/remindWaiting.js"
+    "remind:waiting:prod": "node dist/scripts/remindWaiting.js",
+    "seed:credentials": "tsx src/scripts/seedCredentialGames.ts"
   },
   "keywords": [],
   "author": "",

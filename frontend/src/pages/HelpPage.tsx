@@ -61,7 +61,7 @@ const FAQS = [
   },
   {
     q: "Do you ever ask for my password?",
-    a: "Never. Do not share your password or verification codes with anyone, including us.",
+    a: "Not for Free Fire, PUBG Mobile or Mobile Legends. A few games, currently Roblox and eFootball, can only be topped up by signing in to your account, so those order forms ask for your login details. We store them encrypted, use them only for your order and delete them when it is finished. Only enter your password on the order form, never in a WhatsApp message, and change it after your top-up.",
   },
 ];
 

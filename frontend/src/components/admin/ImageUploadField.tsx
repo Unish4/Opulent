@@ -30,7 +30,10 @@ export default function ImageUploadField({
     upload.mutate(file, {
       onSuccess: (image) => {
         onUploaded(image);
-        toast.success("Artwork uploaded. Save the game to apply it.");
+        toast.success(
+          "Artwork uploaded! Click 'Save changes' at the bottom to apply it to the game.",
+          { duration: 5000 },
+        );
       },
       onError: (err) => toast.error(err.message),
     });
@@ -38,12 +41,14 @@ export default function ImageUploadField({
 
   return (
     <div className="flex items-center gap-4">
-      <GameImage
-        src={currentUrl}
-        name={name || "Game"}
-        width={200}
-        className="size-24 rounded-lg"
-      />
+      <div className="relative flex size-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-line bg-surface">
+        <GameImage
+          src={currentUrl}
+          name={name || "Game"}
+          width={200}
+          className="size-full object-cover object-center"
+        />
+      </div>
       <div>
         <input
           ref={inputRef}
@@ -62,7 +67,7 @@ export default function ImageUploadField({
           <Upload size={16} /> Upload artwork
         </Button>
         <p className="mt-2 text-xs text-muted">
-          JPEG, PNG or WebP, up to 2 MB.
+          JPEG, PNG or WebP, up to 5 MB. Remember to save the form after uploading.
         </p>
       </div>
     </div>

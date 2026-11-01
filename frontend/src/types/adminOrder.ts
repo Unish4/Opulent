@@ -23,6 +23,7 @@ export interface AdminOrderListItem {
   playerId: string | null;
   serverId: string | null;
   email: string | null;
+  login: string | null;
   playerName: string | null;
   nameUnverified: boolean;
   customerName: string | null;
@@ -62,6 +63,8 @@ export interface AdminOrderDetail {
     serverId: string | null;
     playerName: string | null;
     email: string | null;
+    login: string | null;
+    password?: string | null;
     playerNameSource: "lookup" | "customer_typed" | "not_applicable";
   };
   lookup: {
@@ -71,6 +74,9 @@ export interface AdminOrderDetail {
     checkedAt: string;
   } | null;
   nameUnverified: boolean;
+  hasCredential: boolean;
+  canRevealPassword: boolean;
+  credentialRevealCount: number;
   customer: {
     id: string;
     name: string;

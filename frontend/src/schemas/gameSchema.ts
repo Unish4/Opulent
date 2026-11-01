@@ -1,7 +1,21 @@
 import { z } from "zod";
 
-const fieldKeys = ["playerId", "serverId", "playerName", "email"] as const;
-const ruleTypes = ["digits", "alphanumeric", "text", "email"] as const;
+const fieldKeys = [
+  "playerId",
+  "serverId",
+  "playerName",
+  "email",
+  "login",
+  "password",
+] as const;
+
+const ruleTypes = [
+  "digits",
+  "alphanumeric",
+  "text",
+  "email",
+  "password",
+] as const;
 
 export const gameFormSchema = z
   .object({
@@ -38,7 +52,7 @@ export const gameFormSchema = z
         }),
       )
       .min(1, "Add at least one field")
-      .max(4),
+      .max(5),
     lookupEnabled: z.boolean(),
     providerGameCode: z.string().trim().max(60),
     isPublished: z.boolean(),
@@ -61,11 +75,26 @@ export const gameFormSchema = z
         message: "Each field type can be used once",
       });
     }
-    if (!keys.includes("playerId") && !keys.includes("email")) {
+    if (
+      !keys.includes("playerId") &&
+      !keys.includes("email") &&
+      !keys.includes("login")
+    ) {
       ctx.addIssue({
         code: "custom",
         path: ["playerFields"],
-        message: "Add a player ID or email field",
+        message: "Add a player ID, email or login field",
+      });
+    }
+    if (
+      keys.includes("password") &&
+      !keys.includes("login") &&
+      !keys.includes("email")
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["playerFields"],
+        message: "A password field needs a login or email field",
       });
     }
     value.playerFields.forEach((field, index) => {
